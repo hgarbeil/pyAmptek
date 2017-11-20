@@ -24,6 +24,11 @@ class gridscan(QtWidgets.QMainWindow):
             mbox.setInformativeText("Start EPICS IOC")
             mbox.exec_()
             sys.exit (app.exit(-1))
+
+
+
+
+        #motors
         caput ("Dera:m2.VAL", 2.7)
 
         print "We get to here "
@@ -65,6 +70,8 @@ class gridscan(QtWidgets.QMainWindow):
         self.ui.browseButton.clicked.connect (self.browse_prefix)
         self.ui.StartScanButton.clicked.connect (self.start_scan)
         self.ui.exitButton.clicked.connect (self.closeup)
+
+
 
 
     def browse_prefix (self) :

@@ -1,9 +1,11 @@
 from epics import caput, caget, cainfo
-from PyQt5 import QtCore
+from PyQt5 import QtCore, QtGui
 from time import localtime
 import numpy as np
 import os
+import sys
 import subprocess
+from Amp import *
 
 class MyCAEpics (QtCore.QThread):
 
@@ -17,6 +19,19 @@ class MyCAEpics (QtCore.QThread):
         self.x_nsteps = 10
         self.x_inc = 0.01
         self.y_inc = 0.01
+
+        # amptek
+        self.amptek = Amp()
+        status = self.amptek.connect()
+        if status != 1 :
+            print 'could not open spectrometer'
+            mbox = QtGui.QMessageBox()
+            mbox.setWindowTitle("GridScan Problem : Amptek")
+            mbox.setIcon(QtGui.QMessageBox.Critical)
+            mbox.setText("Problem with Amptek USB communication")
+            mbox.setInformativeText("Check spectrometer")
+            mbox.exec_()
+            #sys.exit(app.exit(-1))
 
 
     def set_params (self, x0, xrange, xsteps, y0, yrange, ysteps) :
@@ -76,12 +91,16 @@ class MyCAEpics (QtCore.QThread):
                 count = count + 1
                 cmdstring = "C:/Users/przem/workdir/X123/build-X123_cmd-Desktop_Qt_5_9_0_MinGW_32bit-Release/release/X123.exe"
                 fullstring = "%s %s %d"%(cmdstring, filstring, self.acqtime)
+                acqstring = "Acquiring %05d %05d" % (ix, iy)
+                self.set_status.emit(acqstring, 1)
+                self.amptek.set_spectrum_file (filstring)
+                self.amptek.set_acquisition_time (self.acqtime)
+                self.amptek.start_acquisition()
                 #os.system(fullstring)
-                news = [cmdstring, filstring, "%d"%(self.acqtime)]
-                acqstring = "Acquiring %05d %05d"%(ix,iy)
-                self.set_status.emit (acqstring, 1)
-                p = subprocess.Popen (news)
-                p.wait()
+                #news = [cmdstring, filstring, "%d"%(self.acqtime)]
+                #p = subprocess.Popen (news)
+                #p.wait()
                 print "Scanning... file will be : ", fullstring
+
         self.set_status.emit("Ready", 0)
         posfile.close()
