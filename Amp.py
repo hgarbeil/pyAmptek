@@ -18,6 +18,7 @@ class Amp(object):
         amplib.X123_setData.argtypes=[ctypes.c_void_p,np.ctypeslib.ndpointer(np.int64, flags='C_CONTIGUOUS')]
         amplib.X123_setData.restypes= ctypes.c_void_p
         amplib.X123_setData (self.ampobj, self.ydata)
+        self.elapsedSecs = 0
 
     #connect to usb spectrometer
     def connect(self):

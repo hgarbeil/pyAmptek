@@ -70,7 +70,8 @@ class gridscan(QtWidgets.QMainWindow):
         self.ui.browseButton.clicked.connect (self.browse_prefix)
         self.ui.StartScanButton.clicked.connect (self.start_scan)
         self.ui.exitButton.clicked.connect (self.closeup)
-
+        self.mytimer = QtCore.QTimer ()
+        self.mytimer.connect (self.update_plot)
 
 
 
@@ -136,6 +137,9 @@ class gridscan(QtWidgets.QMainWindow):
             p.setColor(self.ui.statusLE.backgroundRole(), QtCore.Qt.white)
         self.ui.statusLE.setPalette (p)
         self.ui.statusLE.setText (str)
+
+    def update_plot (self) :
+        
 
     def closeup (self) :
         sys.exit(app.exit (0))

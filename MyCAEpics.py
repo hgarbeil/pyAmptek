@@ -34,6 +34,7 @@ class MyCAEpics (QtCore.QThread):
             #sys.exit(app.exit(-1))
 
 
+
     def set_params (self, x0, xrange, xsteps, y0, yrange, ysteps) :
         self.x_start = x0 - xrange
         self.x_inc = xrange * 2 / xsteps
