@@ -139,7 +139,7 @@ class gridscan(QtWidgets.QMainWindow):
         self.ui.statusLE.setText (str)
 
     def update_plot (self) :
-        
+
 
     def closeup (self) :
         sys.exit(app.exit (0))
