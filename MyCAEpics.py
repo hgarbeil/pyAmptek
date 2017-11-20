@@ -92,6 +92,7 @@ class MyCAEpics (QtCore.QThread):
                 cmdstring = "C:/Users/przem/workdir/X123/build-X123_cmd-Desktop_Qt_5_9_0_MinGW_32bit-Release/release/X123.exe"
                 fullstring = "%s %s %d"%(cmdstring, filstring, self.acqtime)
                 acqstring = "Acquiring %05d %05d" % (ix, iy)
+                print "Scanning... file will be : ", filstring
                 self.set_status.emit(acqstring, 1)
                 self.amptek.set_spectrum_file (filstring)
                 self.amptek.set_acquisition_time (self.acqtime)
@@ -100,7 +101,7 @@ class MyCAEpics (QtCore.QThread):
                 #news = [cmdstring, filstring, "%d"%(self.acqtime)]
                 #p = subprocess.Popen (news)
                 #p.wait()
-                print "Scanning... file will be : ", fullstring
+
 
         self.set_status.emit("Ready", 0)
         posfile.close()
