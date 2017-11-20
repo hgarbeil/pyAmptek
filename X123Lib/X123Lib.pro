@@ -30,7 +30,8 @@ SOURCES += \
     DeviceIO/ParsePacket.cpp \
     DeviceIO/SendCommand.cpp \
     ConsoleHelper.cpp \
-    stringex.cpp
+    stringex.cpp \
+    x123.cpp
 
 HEADERS += \
     DeviceIO/DP5Protocol.h \
@@ -44,7 +45,8 @@ HEADERS += \
     DeviceIO/stringex.h \
     ConsoleHelper.h \
     stringex.h \
-    stringSplit.h
+    stringSplit.h \
+    x123.h
 
 INCLUDEPATH += ./DeviceIO ./
 LIBS += -L../X123Lib/DeviceIO -lstdc++ -lm ../X123Lib/DeviceIO/libusb.lib
