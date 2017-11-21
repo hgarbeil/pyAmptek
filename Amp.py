@@ -1,8 +1,8 @@
 import ctypes
 import numpy as np
 
-amplib = ctypes.cdll.LoadLibrary(r"C:/Users/harold/workdir/pyAmptek/X123Lib/X123.dll")
-
+#amplib = ctypes.cdll.LoadLibrary(r"C:/Users/przem/workdir/pyAmptek/X123Lib/X123.dll")
+amplib = ctypes.cdll.LoadLibrary(r"X123.dll")
 
 class Amp(object):
 
@@ -32,8 +32,9 @@ class Amp(object):
 
         amplib.X123_readCFil.argtypes = [ctypes.c_void_p, ctypes.c_char_p]
         amplib.X123_readCFil.restypes = ctypes.c_void_p
-        str = 'C:/configfile.txt'
+        str = 'C:/Users/przem/workdir/X123/PX5_Console_Test.txt'
         amplib.X123_readCFil (self.ampobj, str)
+        return stat
 
     #disconnect the spectrometer
     def disconnect(self):

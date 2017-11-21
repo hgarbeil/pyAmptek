@@ -6,7 +6,7 @@ CFLAGS = -Wall -g -Os
 LD = ${CC}
 SONAME = X123.dll
 INCLUDES = -IDeviceIO
-LIBS = -LDeviceIO -lusb-1.0
+LIBS = -L. -lusb-1.0 -lm
 
 
 OBJS = x123.o  \

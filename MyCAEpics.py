@@ -23,7 +23,7 @@ class MyCAEpics (QtCore.QThread):
         # amptek
         self.amptek = Amp()
         status = self.amptek.connect()
-        if status != 1 :
+        if status == False  :
             print 'could not open spectrometer'
             mbox = QtGui.QMessageBox()
             mbox.setWindowTitle("GridScan Problem : Amptek")

@@ -12,7 +12,7 @@ import time
 class gridscan(QtWidgets.QMainWindow):
 
     def __init__(self):
-        QWidgets.QMainWindow.__init__(self)
+        QtWidgets.QMainWindow.__init__(self)
         self.ui = uic.loadUi("gridscan_mainwin.ui", self)
         status = caput ("Dera:m3.VAL", 5.1)
         # if status is not equal to 1 messagebox that info and exit
@@ -139,7 +139,8 @@ class gridscan(QtWidgets.QMainWindow):
         self.ui.statusLE.setText (str)
 
     def update_plot (self) :
-
+        hg = 1
+        
 
     def closeup (self) :
         sys.exit(app.exit (0))
