@@ -61,6 +61,10 @@ class gridscan(QtWidgets.QMainWindow):
         # get MyCAEpics instance
         self.ca = MyCAEpics()
 
+        # set the data being sent to spectrometer for access to regularly plotting
+        self.xdata = np.arange (0,2048,dtype=np.int64)
+        self.ydata = np.zeros((2048), dtype=np.int64)
+        self.ca.set_data (self.ydata)
         # link signals to slots
         #self.connect (self.ca, self.ca.update_position, self,
         #              QtCore.pyqtSlot(self.updateMotors))
@@ -71,7 +75,8 @@ class gridscan(QtWidgets.QMainWindow):
         self.ui.StartScanButton.clicked.connect (self.start_scan)
         self.ui.exitButton.clicked.connect (self.closeup)
         self.mytimer = QtCore.QTimer ()
-        self.mytimer.connect (self.update_plot)
+        self.mytimer.timeout.connect (self.update_plot)
+        self.mytimer.start(1000)
 
 
 
@@ -140,6 +145,7 @@ class gridscan(QtWidgets.QMainWindow):
 
     def update_plot (self) :
         hg = 1
+        self.ui.plotWidget.setMyData (self.xdata, self.ydata)
         
 
     def closeup (self) :

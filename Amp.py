@@ -13,12 +13,15 @@ class Amp(object):
 
         self.ampobj = amplib.X123_const()
 
-        # set the data being sent to spectrometer for access to regularly plotting
-        self.ydata = np.zeros ((2048),dtype=np.int64)
-        amplib.X123_setData.argtypes=[ctypes.c_void_p,np.ctypeslib.ndpointer(np.int64, flags='C_CONTIGUOUS')]
-        amplib.X123_setData.restypes= ctypes.c_void_p
-        amplib.X123_setData (self.ampobj, self.ydata)
+
         self.elapsedSecs = 0
+
+    def set_data (self, specd) :
+
+        amplib.X123_setData.argtypes = [ctypes.c_void_p, np.ctypeslib.ndpointer(np.int64, flags='C_CONTIGUOUS')]
+        amplib.X123_setData.restypes = ctypes.c_void_p
+        amplib.X123_setData(self.ampobj, specd)
+
 
     #connect to usb spectrometer
     def connect(self):

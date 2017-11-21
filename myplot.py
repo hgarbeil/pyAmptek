@@ -12,7 +12,7 @@ class MyPlot (pg.PlotWidget):
     def __init__(self, parent):
         pg.PlotWidget.__init__(self, parent)
 
-        self.setXRange (0,1000)
+        self.setXRange (0,2048)
         x = np.random.normal(size=1000)
         y = np.random.normal(size=1000)
         yy = np.random.normal(size=1000)
@@ -28,7 +28,7 @@ class MyPlot (pg.PlotWidget):
         self.box_mode = -1
 
 
-        self.setXRange (630,750)
+        #self.setXRange (630,750)
         self.setYRange (0,1000)
         self.scene().sigMouseMoved.connect (self.mouseMoved)
         self.scene().sigMouseClicked.connect(self.mousePressed)
