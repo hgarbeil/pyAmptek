@@ -53,15 +53,15 @@ class Amp(object):
 
     # set acquisition Time
     def set_acquisition_time (self, secs) :
-        amplib.X123_setAcquisitonTime.argtypes = [ctypes.c_void_p, ctypes.c_int16]
+        amplib.X123_setAcquisitionTime.argtypes = [ctypes.c_void_p, ctypes.c_int]
         amplib.X123_setAcquisitionTime.restypes = ctypes.c_void_p
         amplib.X123_setAcquisitionTime (self.ampobj, secs)
 
     # start acquisition
     def start_acquisition (self) :
-        amplib.X123_start_acquisition.argtypes = [ctypes.c_void_p]
-        amplib.X123_start_acquisition.restypes = ctypes.c_void_p
-        amplib.X123_start_acquisition(self.ampobj)
+        amplib.X123_startAcquisition.argtypes = [ctypes.c_void_p]
+        amplib.X123_startAcquisition.restypes = ctypes.c_void_p
+        amplib.X123_startAcquisition(self.ampobj)
 
 
 

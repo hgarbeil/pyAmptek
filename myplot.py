@@ -29,7 +29,7 @@ class MyPlot (pg.PlotWidget):
 
 
         #self.setXRange (630,750)
-        self.setYRange (0,1000)
+        self.setYRange (0,100)
         self.scene().sigMouseMoved.connect (self.mouseMoved)
         self.scene().sigMouseClicked.connect(self.mousePressed)
         self.myroi[0].sigRegionChangeFinished.connect (self.roi_done)

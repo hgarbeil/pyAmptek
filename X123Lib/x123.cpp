@@ -14,14 +14,14 @@ extern "C"{
     void X123_setData (X123* x123, long *specdata) {x123->SetSpecData (specdata);}
     void X123_setSpecFile (X123* x123, char *cfile) {x123->SetSpectrumFile(cfile);}
     void X123_setAcquisitionTime (X123* x123, int secs){x123->SendPresetAcquisitionTime(secs);}
-    void X123_startAcquisiton (X123* x123){x123->StartAcquisition();}
+    void X123_startAcquisition (X123* x123){x123->StartAcquisition();}
 
 }
 X123::X123()
 {
     chdpp = new CConsoleHelper () ;
     haveSpec = false ;
-    bRunSpectrumTest = false ;
+    bRunSpectrumTest = true ;
     bRunConfigurationTest = false ;
     bHaveStatusResponse = false ;
     bHaveConfigFromHW = false ;
@@ -183,7 +183,7 @@ void X123::StartAcquisition(){
                         for (int i=0; i<nptsSpec; i++){
                             specData[i] = chdpp->DP5Proto.SPECTRUM.DATA[i] ;
                         }
-
+						
                         Sleep(1990);
 
                 }
