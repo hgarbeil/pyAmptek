@@ -467,7 +467,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>Current Acquisition Progress :</string>
+     <string>Acquisition elapsed time (secs) :</string>
     </property>
    </widget>
   </widget>
