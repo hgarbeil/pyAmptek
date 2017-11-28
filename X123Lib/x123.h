@@ -26,7 +26,7 @@ public:
     void ReadDppConfigurationFromHardware(bool);
     void DisplayPresets () ;
     bool haveSpec ;
-    int curSecs ;
+    int curSecs, acqSecs ;
     int nptsSpec ;
     long *specData ;
 

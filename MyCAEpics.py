@@ -92,7 +92,7 @@ class MyCAEpics (QtCore.QThread):
                 #filstring = "%s_%s_%05d_%05d.mca"%(self.outpref, timestring, ix, iy)
                 filstring = "%s_%04d.mca"%(self.outpref,count)
                 count = count + 1
-                cmdstring = "C:/Users/przem/workdir/X123/build-X123_cmd-Desktop_Qt_5_9_0_MinGW_32bit-Release/release/X123.exe"
+                #cmdstring = "C:/Users/przem/workdir/X123/build-X123_cmd-Desktop_Qt_5_9_0_MinGW_32bit-Release/release/X123.exe"
                 fullstring = "%s %s %d"%(cmdstring, filstring, self.acqtime)
                 acqstring = "Acquiring %05d %05d" % (ix, iy)
                 print "Scanning... file will be : ", filstring
