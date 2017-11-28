@@ -15,6 +15,7 @@ extern "C"{
     void X123_setSpecFile (X123* x123, char *cfile) {x123->SetSpectrumFile(cfile);}
     void X123_setAcquisitionTime (X123* x123, int secs){x123->SendPresetAcquisitionTime(secs);}
     void X123_startAcquisition (X123* x123){x123->StartAcquisition();}
+    int  X123_getCurSecs (X123* x123){ return x123->GetCurSecs() ;}
 
 }
 X123::X123()
@@ -31,12 +32,17 @@ X123::X123()
 //    for (int i =0 ; i<nptsSpec; i++) {
 //        specData[i] = 0 ;
 //    }
-    curSecs = 20 ;
+    curSecs = 0 ;
+    acqSecs = 20 ;
 }
 
 X123::~X123 (){
     DisconnectUSB() ;
     delete [] specData ;
+}
+
+int X123::GetElapsedTime (){
+    return curSecs ;
 }
 
 void X123::SetSpecData (long *sarray){
@@ -133,7 +139,7 @@ bool X123::ReadConfigFile (char *cfile)  {
 
 bool X123::SendPresetAcquisitionTime(int sec)
 {
-    curSecs = sec ;
+    acqSecs = sec ;
     CONFIG_OPTIONS CfgOptions;
     char str[20] ;
 
@@ -157,10 +163,11 @@ bool X123::SendPresetAcquisitionTime(int sec)
 
 // Clears spectrum data and starts acquisition
 void X123::StartAcquisition(){
-    int MaxMCA = curSecs / 2 + 1;
+    int MaxMCA = acqSecs / 2 + 1;
     int count = 0 ;
     bool bDisableMCA;
 
+    curSecs = 0 ;
     //bRunSpectrumTest = false;		// disable test
     if (bRunSpectrumTest) {
         cout << "\tRunning spectrum test..." << endl;
@@ -185,6 +192,7 @@ void X123::StartAcquisition(){
                         }
 						
                         Sleep(1990);
+                        curSecs += 2 ;
 
                 }
             }else {
@@ -272,4 +280,9 @@ void X123::SaveSpectrumFile()
     // create spectrum file, save file to string
     strSpectrum = chdpp->CreateMCAData(chdpp->DP5Proto.SPECTRUM.DATA,chdpp->sfInfo,chdpp->DP5Stat.m_DP5_Status);
     chdpp->SaveSpectrumStringToFile(strSpectrum);	// save spectrum file string to file
+}
+
+
+int X123::GetCurSecs () {
+    return this->curSecs ;
 }

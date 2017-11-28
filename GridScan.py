@@ -13,7 +13,8 @@ class gridscan(QtWidgets.QMainWindow):
     def __init__(self):
         QtWidgets.QMainWindow.__init__(self)
         self.ui = uic.loadUi("gridscan_mainwin.ui", self)
-        status = caput ("Dera:m3.VAL", 5.1)
+        #status = caput ("Dera:m3.VAL", 5.1)
+        self.curAcqSecPBar.setRange(0, 20)
         # if status is not equal to 1 messagebox that info and exit
         if status != 1 :
             mbox = QtGui.QMessageBox ()
@@ -24,14 +25,6 @@ class gridscan(QtWidgets.QMainWindow):
             mbox.exec_()
             sys.exit (app.exit(-1))
 
-
-
-
-        #motors
-        caput ("Dera:m2.VAL", 2.7)
-
-        print "We get to here "
-        # x motors
         curval = caget ("Dera:m3.VAL")
         s="%7.4f"%(curval)
         print "M3 position is : ", s
@@ -73,6 +66,8 @@ class gridscan(QtWidgets.QMainWindow):
         self.ui.browseButton.clicked.connect (self.browse_prefix)
         self.ui.StartScanButton.clicked.connect (self.start_scan)
         self.ui.exitButton.clicked.connect (self.closeup)
+        self.ui.curAcqSecPBar.setRange (0, 20)
+        self.ui.curAcqSecPBar.setValue (0)
         self.mytimer = QtCore.QTimer ()
         self.mytimer.timeout.connect (self.update_plot)
         self.mytimer.start(1000)
@@ -129,7 +124,8 @@ class gridscan(QtWidgets.QMainWindow):
         self.ui.acquisitionTimeLE.setText (acqStr)
         outprefix = self.ui.outprefLE.text()
         self.ca.set_acquisition_params (outprefix, acquisition_time)
-
+        self.curAcqSecPBar.setValue(0)
+        self.curAcqSecPBar.setRange (0, acquisition_time)
         self.ca.start ()
 
 
@@ -143,11 +139,11 @@ class gridscan(QtWidgets.QMainWindow):
         self.ui.statusLE.setText (str)
 
     def update_plot (self) :
-        hg = 1
-
         self.ui.plotWidget.setMyData (self.xdata, self.ydata)
         print self.ydata[300:320]
-        
+        if self.ca.acquire_flag :
+            asecs = self.ca.get_acq_time ()
+            self.curAcqSecPBar.setValue (asecs)
 
     def closeup (self) :
         sys.exit(app.exit (0))

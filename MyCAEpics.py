@@ -11,6 +11,7 @@ class MyCAEpics (QtCore.QThread):
 
     update_position = QtCore.pyqtSignal (int, float)
     set_status = QtCore.pyqtSignal(str, int)
+
     def __init__(self):
         QtCore.QThread.__init__(self)
         self.x_start = 0.
@@ -19,7 +20,7 @@ class MyCAEpics (QtCore.QThread):
         self.x_nsteps = 10
         self.x_inc = 0.01
         self.y_inc = 0.01
-
+        self.acquire_flag = False ;
         # amptek
         self.amptek = Amp()
         status = self.amptek.connect()
@@ -62,6 +63,10 @@ class MyCAEpics (QtCore.QThread):
         self.outpref = ofil
         self.acqtime = atime
 
+    def get_acq_time (self) :
+        isec = self.amptek.get_elapsed_secs()
+        return isec
+
     def run (self) :
         xval = caget ('Dera:m3.VAL')
         print xval
@@ -93,7 +98,8 @@ class MyCAEpics (QtCore.QThread):
                 filstring = "%s_%04d.mca"%(self.outpref,count)
                 count = count + 1
                 #cmdstring = "C:/Users/przem/workdir/X123/build-X123_cmd-Desktop_Qt_5_9_0_MinGW_32bit-Release/release/X123.exe"
-                fullstring = "%s %s %d"%(cmdstring, filstring, self.acqtime)
+                #fullstring = "%s %s %d"%(cmdstring, filstring, self.acqtime)
+                self.acquire_flag = True ;
                 acqstring = "Acquiring %05d %05d" % (ix, iy)
                 print "Scanning... file will be : ", filstring
                 self.set_status.emit(acqstring, 1)
@@ -107,4 +113,5 @@ class MyCAEpics (QtCore.QThread):
 
 
         self.set_status.emit("Ready", 0)
+        self.acquire_flag = False
         posfile.close()
