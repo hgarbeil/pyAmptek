@@ -68,6 +68,7 @@ class gridscan(QtWidgets.QMainWindow):
         self.ui.exitButton.clicked.connect (self.closeup)
         self.ui.curAcqSecPBar.setRange (0, 20)
         self.ui.curAcqSecPBar.setValue (0)
+        self.ui.curAcqSecPBar.setFormat ("%v")
         self.mytimer = QtCore.QTimer ()
         self.mytimer.timeout.connect (self.update_plot)
         self.mytimer.start(1000)

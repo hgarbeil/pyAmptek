@@ -41,10 +41,6 @@ X123::~X123 (){
     delete [] specData ;
 }
 
-int X123::GetElapsedTime (){
-    return curSecs ;
-}
-
 void X123::SetSpecData (long *sarray){
     specData = sarray ;
 }
