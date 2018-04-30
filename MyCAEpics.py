@@ -21,6 +21,7 @@ class MyCAEpics (QtCore.QThread):
         self.x_inc = 0.01
         self.y_inc = 0.01
         self.acquire_flag = False ;
+        self.abort_flag = False
         # amptek
         self.amptek = Amp()
         status = self.amptek.connect()
@@ -34,6 +35,9 @@ class MyCAEpics (QtCore.QThread):
             mbox.exec_()
             #sys.exit(app.exit(-1))
 
+
+    def abort_scan () :
+        self.abort_flag = True
 
     def set_data (self, ydat) :
         self.amptek.set_data(ydat)
@@ -63,11 +67,23 @@ class MyCAEpics (QtCore.QThread):
         self.outpref = ofil
         self.acqtime = atime
 
+    def set_acquisition_time (self,  atime) :
+        self.acqtime = atime
+
     def get_acq_time (self) :
         isec = self.amptek.get_elapsed_secs()
         return isec
 
+    def take_single (self) :
+        acqstring = "Acquiring single scan"
+        self.set_status.emit(acqstring, 1)
+        self.amptek.set_acquisition_time(self.acqtime)
+        self.amptek.start_acquisition()
+        self.acquire_flag = True;
+
+
     def run (self) :
+        self.abort_flag = False
         xval = caget ('Dera:m3.VAL')
         print xval
         count = 0
@@ -78,6 +94,8 @@ class MyCAEpics (QtCore.QThread):
                 ltime.tm_hour, ltime.tm_min)
         posfile = open ("%s_position.txt"%(self.outpref), 'w')
         for i in range (self.y_nsteps) :
+            if (self.abort_flag == True):
+                break
             yval = self.y_start + i * self.y_inc
             #caput ('Dera:m2.VAL', yval)
             self.move_motor (1, yval)
@@ -85,6 +103,8 @@ class MyCAEpics (QtCore.QThread):
             QtCore.QThread.sleep (2)
             iy = int (yval * 1000)
             for j in range (self.x_nsteps) :
+                if (self.abort_flag== True) :
+                    break
                 xval = self.x_start + j * self.x_inc
                 outstr = '%d\t%f\t%f\r\n'%(count,xval,yval)
                 posfile.write (outstr)

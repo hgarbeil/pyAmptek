@@ -65,6 +65,8 @@ class gridscan(QtWidgets.QMainWindow):
         self.ui.x_MoveButton.clicked.connect (self.move_x_motor)
         self.ui.browseButton.clicked.connect (self.browse_prefix)
         self.ui.StartScanButton.clicked.connect (self.start_scan)
+        self.ui.singleAcqButton.clicked.connect (self.single_take)
+        self.ui.abortScanButton.clicked.connect (self.abort_scan)
         self.ui.exitButton.clicked.connect (self.closeup)
         self.ui.curAcqSecPBar.setRange (0, 20)
         self.ui.curAcqSecPBar.setValue (0)
@@ -128,6 +130,15 @@ class gridscan(QtWidgets.QMainWindow):
         self.curAcqSecPBar.setValue(0)
         self.curAcqSecPBar.setRange (0, acquisition_time)
         self.ca.start ()
+
+    def abort_scan (self) :
+        self.ca.abort_scan()
+
+    def single_take (self) :
+        acquisition_time = int(self.ui.acquisitionTimeLE.text())
+        self.ca.set_acquisition_params(outprefix, acquisition_time)
+        self.curAcqSecPBar.setValue(0)
+        self.curAcqSecPBar.setRange(0, acquisition_time)
 
 
     def set_status_label (self, str, state=0) :

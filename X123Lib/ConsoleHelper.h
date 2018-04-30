@@ -44,8 +44,7 @@ public:
 	/// LibUsb send a command that requires configuration options processing.
 	bool LibUsb_SendCommand_Config(TRANSMIT_PACKET_TYPE XmtCmd, CONFIG_OPTIONS CfgOptions);
 	///  LibUsb receive data.
-	bool LibUsb_ReceiveData();
-
+    bool LibUsb_ReceiveData();
 	// communications helper functions
 
 	/// Defines and implements DPP protocol.
