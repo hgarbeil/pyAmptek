@@ -29,7 +29,8 @@ class MyPlot (pg.PlotWidget):
 
 
         #self.setXRange (630,750)
-        self.setYRange (0,100)
+        self.setYRange (0,100,padding=0)
+        self.setXRange (0,2048, padding=0)
         self.scene().sigMouseMoved.connect (self.mouseMoved)
         self.scene().sigMouseClicked.connect(self.mousePressed)
         self.myroi[0].sigRegionChangeFinished.connect (self.roi_done)
@@ -72,7 +73,7 @@ class MyPlot (pg.PlotWidget):
         self.ry = y.copy ()
         minv = x[0]
         maxv = x[len(x)-1]
-
+"""
         if (self.autoFlag or self.first_data ) :
             maxy = np.max(y)
             miny = np.min(y)
@@ -82,6 +83,7 @@ class MyPlot (pg.PlotWidget):
                 self.startX = minv
                 self.endX = maxv
             self.first_data = False
+            """
 
         self.plot (x,y, pen=(0,3))
         maxarg = np.argmax (y)
