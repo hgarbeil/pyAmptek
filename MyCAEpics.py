@@ -36,6 +36,7 @@ class MyCAEpics (QtCore.QThread):
             #sys.exit(app.exit(-1))
         
         self.single_take = False 
+        self.scanfile = ""
 
 
     def abort_scan (self) :
@@ -132,8 +133,10 @@ class MyCAEpics (QtCore.QThread):
                     print "Scanning... file will be : ", filstring
                     self.set_status.emit(acqstring, 1)
                     self.amptek.set_spectrum_file (filstring)
+                self.scanfile = filstring
                 self.amptek.set_acquisition_time (self.acqtime)
                 self.amptek.start_acquisition()
+                
                 #os.system(fullstring)
                 #news = [cmdstring, filstring, "%d"%(self.acqtime)]
                 #p = subprocess.Popen (news)
@@ -144,3 +147,4 @@ class MyCAEpics (QtCore.QThread):
         self.acquire_flag = False
         if (self.single_take == False) :
             posfile.close()
+        self.singleTake = False 

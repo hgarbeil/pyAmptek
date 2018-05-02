@@ -67,7 +67,7 @@ class gridscan(QtWidgets.QMainWindow):
         self.ui.StartScanButton.clicked.connect (self.start_scan)
         self.ui.singleAcqButton.clicked.connect (self.single_take)
         self.ui.abortScanButton.clicked.connect (self.abort_scan)
-        self.ui.actionLoad_mca_file.clicked.connect (self.load_mca)
+        self.ui.actionLoad_mca_file.triggered.connect (self.load_mca)
         self.ui.exitButton.clicked.connect (self.closeup)
         self.ui.curAcqSecPBar.setRange (0, 20)
         self.ui.curAcqSecPBar.setValue (0)
@@ -84,12 +84,17 @@ class gridscan(QtWidgets.QMainWindow):
         self.ui.outprefLE.setText (fname)
 
     def load_mca (self) :
-        fname = QtGui.QFileDialog.getOpenFileName (self, "Existing .mca file", "C:/X123Data")
-        print "MCA file to read is : ", fname
-        self.readMCAFile (fname, self.ydata, 2048)
+        fname = QtGui.QFileDialog.getOpenFileName(self, "Existing .mca file", "C:/X123Data")
+        mcafile = fname[0]
+        myvals = [0,0,0]
+        print "MCA file to read is : ", mcafile
+        self.readMCAFile (mcafile, self.ydata, myvals, 2048)
         self.ui.plotWidget.setMyData(self.xdata, self.ydata)
+        outText = "Displayed MCA File : \r\n%s"%mcafile
+        outText = "%s\r\nExposure Time : %f"%(outText, myvals[0])
+        self.ui.plotInfoTE.setText (outText)
 
-    def readMCAFile (self, fname, specdata, npts) :
+    def readMCAFile (self, fname, specdata, myvals, npts) :
         f = open (fname, 'r')
         count = -1
         for iline in f :
@@ -97,8 +102,12 @@ class gridscan(QtWidgets.QMainWindow):
                 count = 0
                 continue
             if (count >= 0 and count < npts) :
-                specdata[i] = int(iline)
+                specdata[count] = int(iline)
                 count += 1
+            if "Accumulation" in iline :
+                one,two = iline.split(":")
+                print "exposure : ",two
+                myvals[0]= (float (two))
 
 
     def update_motors (self, mot_num, pos) :
@@ -181,6 +190,10 @@ class gridscan(QtWidgets.QMainWindow):
                 asecs = self.fulltime
             self.curAcqSecPBar.setValue(asecs)
             print asecs
+            str0 = "Scan file : \r\n%s"%self.ca.scanfile
+            str1 = "%s\r\nElapsed time : %d"%(str0,asecs)
+            print str1
+            self.ui.plotInfoTE.setText (str1)
 
     def closeup (self) :
         sys.exit(app.exit (0))
