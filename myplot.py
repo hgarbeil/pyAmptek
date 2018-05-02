@@ -73,18 +73,7 @@ class MyPlot (pg.PlotWidget):
         self.ry = y.copy ()
         minv = x[0]
         maxv = x[len(x)-1]
-"""
-        if (self.autoFlag or self.first_data ) :
-            maxy = np.max(y)
-            miny = np.min(y)
-            self.setXRange (minv, maxv)
-            self.setYRange (miny, maxy*1.5)
-            if self.first_data :
-                self.startX = minv
-                self.endX = maxv
-            self.first_data = False
-            """
-
+		
         self.plot (x,y, pen=(0,3))
         maxarg = np.argmax (y)
         self.maxLinePos = x[maxarg]

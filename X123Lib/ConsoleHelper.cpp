@@ -6,6 +6,7 @@
 #include <string.h>
 
 using namespace stringSplit;
+using namespace std ;
 
 CConsoleHelper::CConsoleHelper(void)
 {
@@ -741,9 +742,12 @@ string CConsoleHelper::CreateMCAData(long m_larDataBuffer[], SpectrumFileType sf
 	strText = strfn.Format("%i", sfInfo.SerialNumber);
     strMCA += "SERIAL_NUMBER - " + strText + "\r\n";
     strMCA += "<<DATA>>\r\n";
-	for (idxChan=0;idxChan<sfInfo.m_iNumChan;idxChan++) {
+    cout << "Writing output data "<< sfInfo.m_iNumChan << endl ;
+	//for (idxChan=0;idxChan<sfInfo.m_iNumChan;idxChan++) {
+	for (idxChan=0;idxChan<2048;idxChan++) {
 		strData = strfn.Format("%i", m_larDataBuffer[idxChan]);
 		strMCA += strData + "\r\n";
+		//cout << "Val is : " << strData << endl ;
 	}
     strMCA += "<<END>>\r\n";
 	strMCA += "<<DP5 CONFIGURATION>>\r\n";

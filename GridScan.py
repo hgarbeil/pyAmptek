@@ -13,7 +13,7 @@ class gridscan(QtWidgets.QMainWindow):
     def __init__(self):
         QtWidgets.QMainWindow.__init__(self)
         self.ui = uic.loadUi("gridscan_mainwin.ui", self)
-        #status = caput ("Dera:m3.VAL", 5.1)
+        status = caput ("Dera:m3.VAL", 5.1)
         self.curAcqSecPBar.setRange(0, 20)
         # if status is not equal to 1 messagebox that info and exit
         if status != 1 :
@@ -54,8 +54,8 @@ class gridscan(QtWidgets.QMainWindow):
         self.ca = MyCAEpics()
 
         # set the data being sent to spectrometer for access to regularly plotting
-        self.xdata = np.arange (0,2048,dtype=np.int64)
-        self.ydata = np.zeros((2048), dtype=np.int64)
+        self.xdata = np.arange (0,2048,dtype=np.int32)
+        self.ydata = np.zeros((2048), dtype=np.int32)
         self.ca.set_data (self.ydata)
         # link signals to slots
         #self.connect (self.ca, self.ca.update_position, self,
@@ -74,6 +74,7 @@ class gridscan(QtWidgets.QMainWindow):
         self.mytimer = QtCore.QTimer ()
         self.mytimer.timeout.connect (self.update_plot)
         self.mytimer.start(1000)
+        self.fulltime = 20 
 
 
 
@@ -129,6 +130,7 @@ class gridscan(QtWidgets.QMainWindow):
         self.ca.set_acquisition_params (outprefix, acquisition_time)
         self.curAcqSecPBar.setValue(0)
         self.curAcqSecPBar.setRange (0, acquisition_time)
+        self.fulltime = acquisition_time
         self.ca.start ()
 
     def abort_scan (self) :
@@ -136,9 +138,12 @@ class gridscan(QtWidgets.QMainWindow):
 
     def single_take (self) :
         acquisition_time = int(self.ui.acquisitionTimeLE.text())
-        self.ca.set_acquisition_params(outprefix, acquisition_time)
+        self.ca.set_acquisition_time(acquisition_time)
         self.curAcqSecPBar.setValue(0)
         self.curAcqSecPBar.setRange(0, acquisition_time)
+        self.fulltime = acquisition_time
+        self.ca.take_single() 
+        
 
 
     def set_status_label (self, str, state=0) :
@@ -152,10 +157,12 @@ class gridscan(QtWidgets.QMainWindow):
 
     def update_plot (self) :
         self.ui.plotWidget.setMyData (self.xdata, self.ydata)
-        print self.ydata[300:320]
         if self.ca.acquire_flag :
             asecs = self.ca.get_acq_time ()
-            self.curAcqSecPBar.setValue (asecs)
+            if (asecs >= self.fulltime) :
+                asecs = self.fulltime
+            self.curAcqSecPBar.setValue(asecs)
+            print asecs
 
     def closeup (self) :
         sys.exit(app.exit (0))

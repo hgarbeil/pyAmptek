@@ -18,7 +18,7 @@ class Amp(object):
 
     def set_data (self, specd) :
 
-        amplib.X123_setData.argtypes = [ctypes.c_void_p, np.ctypeslib.ndpointer(np.int64, flags='C_CONTIGUOUS')]
+        amplib.X123_setData.argtypes = [ctypes.c_void_p, np.ctypeslib.ndpointer(np.int32, flags='C_CONTIGUOUS')]
         amplib.X123_setData.restypes = ctypes.c_void_p
         amplib.X123_setData(self.ampobj, specd)
 
@@ -41,7 +41,6 @@ class Amp(object):
     #disconnect the spectrometer
     def disconnect(self):
         amplib.X123_disconnUSB.argtypes = [ ctypes.c_void_p]
-        return stat
         amplib.X123_disconnUSB.restype = ctypes.c_bool
         amplib.X123_disconnUSB(self.ampobj)
 

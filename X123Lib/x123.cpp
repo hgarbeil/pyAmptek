@@ -11,7 +11,7 @@ extern "C"{
     void X123_disconnUSB (X123* x123) { return x123->DisconnectUSB();}
     void X123_clearSpec (X123* x123) {x123->ClearSpectrum();}
     void X123_readCFil (X123* x123, char *cfile) {x123->ReadConfigFile(cfile);}
-    void X123_setData (X123* x123, long *specdata) {x123->SetSpecData (specdata);}
+    void X123_setData (X123* x123, int *specdata) {x123->SetSpecData (specdata);}
     void X123_setSpecFile (X123* x123, char *cfile) {x123->SetSpectrumFile(cfile);}
     void X123_setAcquisitionTime (X123* x123, int secs){x123->SendPresetAcquisitionTime(secs);}
     void X123_startAcquisition (X123* x123){x123->StartAcquisition();}
@@ -41,7 +41,7 @@ X123::~X123 (){
     delete [] specData ;
 }
 
-void X123::SetSpecData (long *sarray){
+void X123::SetSpecData (int *sarray){
     specData = sarray ;
 }
 
@@ -275,7 +275,9 @@ void X123::SaveSpectrumFile()
     chdpp->sfInfo.strTag = "TestTag";										// tag
     // create spectrum file, save file to string
     strSpectrum = chdpp->CreateMCAData(chdpp->DP5Proto.SPECTRUM.DATA,chdpp->sfInfo,chdpp->DP5Stat.m_DP5_Status);
-    chdpp->SaveSpectrumStringToFile(strSpectrum);	// save spectrum file string to file
+	//strSpectrum = chdpp->CreateMCAData(specData,chdpp->sfInfo,chdpp->DP5Stat.m_DP5_Status);
+    
+	chdpp->SaveSpectrumStringToFile(strSpectrum);	// save spectrum file string to file
 }
 
 

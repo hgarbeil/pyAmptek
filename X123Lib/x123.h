@@ -20,7 +20,7 @@ public:
     // Saving spectrum file
     void SaveSpectrumFile() ;
     void SetSpectrumFile (char *) ;
-    void SetSpecData (long *sarray) ;
+    void SetSpecData (int *sarray) ;
 
     bool ReadConfigFile(char *) ;
     void ReadDppConfigurationFromHardware(bool);
@@ -29,7 +29,7 @@ public:
 	int	GetCurSecs() ;
     int curSecs, acqSecs ;
     int nptsSpec ;
-    long *specData ;
+    int *specData ;
 
 protected :
     bool bRunSpectrumTest, bRunConfigurationTest ;

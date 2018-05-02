@@ -34,9 +34,11 @@ class MyCAEpics (QtCore.QThread):
             mbox.setInformativeText("Check spectrometer")
             mbox.exec_()
             #sys.exit(app.exit(-1))
+        
+        self.single_take = False 
 
 
-    def abort_scan () :
+    def abort_scan (self) :
         self.abort_flag = True
 
     def set_data (self, ydat) :
@@ -78,52 +80,58 @@ class MyCAEpics (QtCore.QThread):
         acqstring = "Acquiring single scan"
         self.set_status.emit(acqstring, 1)
         self.amptek.set_acquisition_time(self.acqtime)
-        self.amptek.start_acquisition()
         self.acquire_flag = True;
+        self.single_take = True
+        self.start()
+        
 
 
     def run (self) :
         self.abort_flag = False
-        xval = caget ('Dera:m3.VAL')
-        print xval
-        count = 0
-        yval = caget ('Dera:m2.VAL')
-        print yval
-        ltime = localtime()
-        timestring = "%4d%02d%02d%02d%02d"%(ltime.tm_year,ltime.tm_mon, ltime.tm_mday,
+        if (self.single_take == False) :
+            xval = caget ('Dera:m3.VAL')
+            count = 0
+            yval = caget ('Dera:m2.VAL')
+            ltime = localtime()
+            timestring = "%4d%02d%02d%02d%02d"%(ltime.tm_year,ltime.tm_mon, ltime.tm_mday,
                 ltime.tm_hour, ltime.tm_min)
-        posfile = open ("%s_position.txt"%(self.outpref), 'w')
+            posfile = open ("%s_position.txt"%(self.outpref), 'w')
+        else :
+            self.y_nsteps = 1
+            self.x_nsteps = 1
         for i in range (self.y_nsteps) :
             if (self.abort_flag == True):
                 break
             yval = self.y_start + i * self.y_inc
             #caput ('Dera:m2.VAL', yval)
-            self.move_motor (1, yval)
-            self.update_position.emit (1, yval)
-            QtCore.QThread.sleep (2)
+            if (self.single_take == False) :
+                self.move_motor (1, yval)
+                self.update_position.emit (1, yval)
+                QtCore.QThread.sleep (2)
             iy = int (yval * 1000)
             for j in range (self.x_nsteps) :
                 if (self.abort_flag== True) :
                     break
-                xval = self.x_start + j * self.x_inc
-                outstr = '%d\t%f\t%f\r\n'%(count,xval,yval)
-                posfile.write (outstr)
-                #caput ('Dera:m3.VAL', xval)
-                self.update_position.emit (0, xval)
-                QtCore.QThread.sleep (2)
-                self.move_motor (0, xval)
-                ix = int (xval * 1000)
+                if (self.single_take == False) :
+                    xval = self.x_start + j * self.x_inc
+                    outstr = '%d\t%f\t%f\r\n'%(count,xval,yval)
+                    posfile.write (outstr)
+                    #caput ('Dera:m3.VAL', xval)
+                    self.update_position.emit (0, xval)
+                    QtCore.QThread.sleep (2)
+                    self.move_motor (0, xval)
+                    ix = int (xval * 1000)
                 # now do the scan
                 #filstring = "%s_%s_%05d_%05d.mca"%(self.outpref, timestring, ix, iy)
-                filstring = "%s_%04d.mca"%(self.outpref,count)
-                count = count + 1
+                    filstring = "%s_%04d.mca"%(self.outpref,count)
+                    count = count + 1
                 #cmdstring = "C:/Users/przem/workdir/X123/build-X123_cmd-Desktop_Qt_5_9_0_MinGW_32bit-Release/release/X123.exe"
                 #fullstring = "%s %s %d"%(cmdstring, filstring, self.acqtime)
-                self.acquire_flag = True ;
-                acqstring = "Acquiring %05d %05d" % (ix, iy)
-                print "Scanning... file will be : ", filstring
-                self.set_status.emit(acqstring, 1)
-                self.amptek.set_spectrum_file (filstring)
+                    self.acquire_flag = True ;
+                    acqstring = "Acquiring %05d %05d" % (ix, iy)
+                    print "Scanning... file will be : ", filstring
+                    self.set_status.emit(acqstring, 1)
+                    self.amptek.set_spectrum_file (filstring)
                 self.amptek.set_acquisition_time (self.acqtime)
                 self.amptek.start_acquisition()
                 #os.system(fullstring)
@@ -134,4 +142,5 @@ class MyCAEpics (QtCore.QThread):
 
         self.set_status.emit("Ready", 0)
         self.acquire_flag = False
-        posfile.close()
+        if (self.single_take == False) :
+            posfile.close()
