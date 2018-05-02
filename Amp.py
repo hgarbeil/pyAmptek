@@ -67,6 +67,11 @@ class Amp(object):
         amplib.X123_getCurSecs.restypes = ctypes.c_int
         return amplib.X123_getCurSecs(self.ampobj)
 
+
+
+
+
+
 a = Amp()
 status = a.connect()
 a.disconnect()

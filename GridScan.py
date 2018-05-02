@@ -67,6 +67,7 @@ class gridscan(QtWidgets.QMainWindow):
         self.ui.StartScanButton.clicked.connect (self.start_scan)
         self.ui.singleAcqButton.clicked.connect (self.single_take)
         self.ui.abortScanButton.clicked.connect (self.abort_scan)
+        self.ui.actionLoad_mca_file.clicked.connect (self.load_mca)
         self.ui.exitButton.clicked.connect (self.closeup)
         self.ui.curAcqSecPBar.setRange (0, 20)
         self.ui.curAcqSecPBar.setValue (0)
@@ -81,6 +82,23 @@ class gridscan(QtWidgets.QMainWindow):
     def browse_prefix (self) :
         fname = QtGui.QFileDialog.getSaveFileName (self,"Output prefix name")
         self.ui.outprefLE.setText (fname)
+
+    def load_mca (self) :
+        fname = QtGui.QFileDialog.getOpenFileName (self, "Existing .mca file", "C:/X123Data")
+        print "MCA file to read is : ", fname
+        self.readMCAFile (fname, self.ydata, 2048)
+        self.ui.plotWidget.setMyData(self.xdata, self.ydata)
+
+    def readMCAFile (self, fname, specdata, npts) :
+        f = open (fname, 'r')
+        count = -1
+        for iline in f :
+            if "DATA" in iline :
+                count = 0
+                continue
+            if (count >= 0 and count < npts) :
+                specdata[i] = int(iline)
+                count += 1
 
 
     def update_motors (self, mot_num, pos) :

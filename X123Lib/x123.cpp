@@ -273,10 +273,12 @@ void X123::SaveSpectrumFile()
     chdpp->sfInfo.SerialNumber = chdpp->DP5Stat.m_DP5_Status.SerialNumber;	// dpp serial number
     chdpp->sfInfo.strDescription = "Amptek Spectrum File";					// description
     chdpp->sfInfo.strTag = "TestTag";										// tag
+    chdpp->sfInfo.m_iNumChan = 2048 ;
+    chdpp->sfInfo.nptsSpec = 2048 ;
     // create spectrum file, save file to string
     strSpectrum = chdpp->CreateMCAData(chdpp->DP5Proto.SPECTRUM.DATA,chdpp->sfInfo,chdpp->DP5Stat.m_DP5_Status);
 	//strSpectrum = chdpp->CreateMCAData(specData,chdpp->sfInfo,chdpp->DP5Stat.m_DP5_Status);
-    
+
 	chdpp->SaveSpectrumStringToFile(strSpectrum);	// save spectrum file string to file
 }
 
