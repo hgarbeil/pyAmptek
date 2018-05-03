@@ -158,6 +158,7 @@ class gridscan(QtWidgets.QMainWindow):
         self.curAcqSecPBar.setValue(0)
         self.curAcqSecPBar.setRange (0, acquisition_time)
         self.fulltime = acquisition_time
+        self.ca.single_take = False
         self.ca.start ()
 
     def abort_scan (self) :

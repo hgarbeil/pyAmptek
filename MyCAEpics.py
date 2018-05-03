@@ -133,7 +133,8 @@ class MyCAEpics (QtCore.QThread):
                     print "Scanning... file will be : ", filstring
                     self.set_status.emit(acqstring, 1)
                     self.amptek.set_spectrum_file (filstring)
-                self.scanfile = filstring
+                if (self.single_take == False) :
+    					self.scanfile = filstring
                 self.amptek.set_acquisition_time (self.acqtime)
                 self.amptek.start_acquisition()
                 
