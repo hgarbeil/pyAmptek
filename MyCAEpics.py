@@ -130,8 +130,11 @@ class MyCAEpics (QtCore.QThread):
                     cur_etime = self.mytimer.get_current_etime ()
                     # need to pause for acquisition
                     if (self.acqtime >= cur_etime) :
-                        msgBox = QtGui.QMessageBox ()
-                        msgBox.setText ("Reset instrument exposure time")
+                        self.mytimer.stopclock()
+                        mmb = QtGui.QMessageBox.warning (self,'pyAmptek Exposure', 'Re-start exposure', QtGui.QMessageBox.O)
+                        self.mytimer.start()
+
+
 
                     xval = self.x_start + j * self.x_inc
                     outstr = '%d\t%f\t%f\r\n'%(count,xval,yval)

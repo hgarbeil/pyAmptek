@@ -195,6 +195,7 @@ class gridscan(QtWidgets.QMainWindow):
         self.ui.plotWidget.setMyData (self.xdata, self.ydata)
         if self.ca.acquire_flag :
             asecs = self.ca.get_acq_time ()
+            esecs = self.ca.get_cur_expos_time()
             if (asecs >= self.fulltime) :
                 asecs = self.fulltime
             self.curAcqSecPBar.setValue(asecs)
