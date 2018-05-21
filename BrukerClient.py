@@ -53,15 +53,15 @@ class BrukerClient :
             while (1) :
                 data = self.status_sock.recv (BrukerClient.BSIZE)
                 print data
-                if "[SHUTTERSTATUS" in data :
+                if "[AXES" in data :
                     print "found message"
-                    loc = data.find ("[SHUTTER")
+                    loc = data.find ("[AXES")
                     newstr = data[loc:]
                     print newstr
 
                 #print data
         except socket.error, msg :
-            print "Shutter status error : %s"%msg
+            print "Drive error : %s"%msg
 
 
     def open_shutter (self) :
@@ -81,7 +81,7 @@ class BrukerClient :
 
                 #print data
         except socket.error, msg :
-            print "Shutter status error : %s"%msg
+            print "Open shutter comm error : %s"%msg
 
     def close_shutter (self) :
         message = "[SHUTTER /STATUS=0]\n"
@@ -100,7 +100,7 @@ class BrukerClient :
 
                 #print data
         except socket.error, msg :
-            print "Shutter status error : %s"%msg
+            print "Close shutter comm error : %s"%msg
 
 
 bc = BrukerClient()

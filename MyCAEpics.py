@@ -1,4 +1,5 @@
 from epics import caput, caget, cainfo
+from BrukerClient import *
 from PyQt5 import QtCore, QtGui
 from time import localtime
 import numpy as np
@@ -6,7 +7,7 @@ import os
 import sys
 import subprocess
 from Amp import *
-from ExposTimer import *
+#from ExposTimer import *
 
 class MyCAEpics (QtCore.QThread):
 
@@ -38,8 +39,8 @@ class MyCAEpics (QtCore.QThread):
         
         self.single_take = False 
         self.scanfile = ""
-        self.mytimer = ExposTimer()
-        self.expos_secs = 0
+        #self.mytimer = ExposTimer()
+        #self.expos_secs = 0
 
 
     def abort_scan (self) :
@@ -47,6 +48,9 @@ class MyCAEpics (QtCore.QThread):
 
     def set_data (self, ydat) :
         self.amptek.set_data(ydat)
+
+    def set_bruker_client (self, bc) :
+        self.bclient = bc
 
     def set_params (self, x0, xrange, xsteps, y0, yrange, ysteps) :
         self.x_start = x0 - xrange
@@ -97,6 +101,7 @@ class MyCAEpics (QtCore.QThread):
 
     def run (self) :
         self.abort_flag = False
+        self.bclient.open_shutter()
         if (self.single_take == False) :
             xval = caget ('Dera:m3.VAL')
             count = 0
@@ -106,9 +111,9 @@ class MyCAEpics (QtCore.QThread):
                 ltime.tm_hour, ltime.tm_min)
             posfile = open ("%s_position.txt"%(self.outpref), 'w')
             # start the instrument exposure time timer....
-            if (self.expos_secs > 0) :
-                self.mytimer.set_expos_time (self.expos_secs)
-                self.mytimer.start()
+            #if (self.expos_secs > 0) :
+            #    self.mytimer.set_expos_time (self.expos_secs)
+            #    self.mytimer.start()
         else :
             self.y_nsteps = 1
             self.x_nsteps = 1
@@ -125,14 +130,14 @@ class MyCAEpics (QtCore.QThread):
             for j in range (self.x_nsteps) :
                 if (self.abort_flag== True) :
                     break
-                if (self.single_take == False) :
+                #if (self.single_take == False) :
                     # get the amount of exposure time remaining on the instrument
                     cur_etime = self.mytimer.get_current_etime ()
                     # need to pause for acquisition
-                    if (self.acqtime >= cur_etime) :
-                        self.mytimer.stopclock()
-                        mmb = QtGui.QMessageBox.warning (self,'pyAmptek Exposure', 'Re-start exposure', QtGui.QMessageBox.O)
-                        self.mytimer.start()
+                    #if (self.acqtime >= cur_etime) :
+                    #    self.mytimer.stopclock()
+                    #    mmb = QtGui.QMessageBox.warning (self,'pyAmptek Exposure', 'Re-start exposure', QtGui.QMessageBox.O)
+                    #    self.mytimer.start()
 
 
 
@@ -166,6 +171,7 @@ class MyCAEpics (QtCore.QThread):
                 #p.wait()
 
 
+        self.bclient.close_shutter()
         self.set_status.emit("Ready", 0)
         self.acquire_flag = False
         if (self.single_take == False) :

@@ -67,6 +67,9 @@ class gridscan(QtWidgets.QMainWindow):
         self.xdata = np.arange (0,2048,dtype=np.int32)
         self.ydata = np.zeros((2048), dtype=np.int32)
         self.ca.set_data (self.ydata)
+
+        # set bc to ca
+        self.ca.set_bruker_client(self.bclient)
         # link signals to slots
         #self.connect (self.ca, self.ca.update_position, self,
         #              QtCore.pyqtSlot(self.updateMotors))
@@ -77,18 +80,21 @@ class gridscan(QtWidgets.QMainWindow):
         self.ui.browseButton.clicked.connect (self.browse_prefix)
         self.ui.StartScanButton.clicked.connect (self.start_scan)
         self.ui.singleAcqButton.clicked.connect (self.single_take)
+        self.ui.driveButton.clicked.connect (self.drive_bc_axes)
         self.ui.abortScanButton.clicked.connect (self.abort_scan)
         self.ui.actionLoad_mca_file.triggered.connect (self.load_mca)
         self.ui.exitButton.clicked.connect (self.closeup)
         self.ui.curAcqSecPBar.setRange (0, 20)
         self.ui.curAcqSecPBar.setValue (0)
         self.ui.curAcqSecPBar.setFormat ("%v")
-        self.mytimer = QtCore.QTimer ()
-        self.mytimer.timeout.connect (self.update_plot)
-        self.mytimer.start(1000)
-        self.fulltime = 20 
+        #self.mytimer = QtCore.QTimer ()
+        #self.mytimer.timeout.connect (self.update_plot)
+        #self.mytimer.start(1000)
+        #self.fulltime = 20
 
 
+    def drive_bc_axes (self):
+        self.bclient.drive_to_default ()
 
     def browse_prefix (self) :
         fname = QtGui.QFileDialog.getSaveFileName (self,"Output prefix name")
@@ -175,7 +181,7 @@ class gridscan(QtWidgets.QMainWindow):
         self.ui.acquisitionTimeLE.setText (acqStr)
         outprefix = self.ui.outprefLE.text()
         self.ca.set_acquisition_params (outprefix, acquisition_time)
-        self.ca.set_expos_timer (expos_secs)
+        #self.ca.set_expos_timer (expos_secs)
         self.curAcqSecPBar.setValue(0)
         self.curAcqSecPBar.setRange (0, acquisition_time)
         self.fulltime = acquisition_time
@@ -219,6 +225,7 @@ class gridscan(QtWidgets.QMainWindow):
             self.ui.plotInfoTE.setText (str1)
 
     def closeup (self) :
+        self.bclient.close_shutter()
         sys.exit(app.exit (0))
 
 

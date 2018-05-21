@@ -13,11 +13,11 @@ class MyPlot (pg.PlotWidget):
         pg.PlotWidget.__init__(self, parent)
 
         self.setXRange (0,2048)
-        x = np.random.normal(size=1000)
-        y = np.random.normal(size=1000)
-        yy = np.random.normal(size=1000)
-        self.plot(x, y, pen=(0,3), symbol='+')  ## setting pen=None disables line drawing
-        self.plot (x, yy, pen=(1,3), symbol='+')
+        #x = np.random.normal(size=1000)
+        #y = np.random.normal(size=1000)
+        #yy = np.random.normal(size=1000)
+        #self.plot(x, y, pen=(0,3), symbol='+')  ## setting pen=None disables line drawing
+        #self.plot (x, yy, pen=(1,3), symbol='+')
         self.autoFlag = False
         self.roi_disp = False
         #rois =[]
