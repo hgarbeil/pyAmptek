@@ -10,6 +10,7 @@ class BrukerClient :
 
     def __init__(self):
         try :
+            self.bcstatus= True
             self.command_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.command_sock.settimeout(10.)
             #   command_sock.setblocking(0)
@@ -32,6 +33,7 @@ class BrukerClient :
             self.get_status()
         except socket.error, msg :
             print "Could not connect with socket : %s"%msg
+            self.bcstatus = False
 
 
     def get_status (self):

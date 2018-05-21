@@ -5,6 +5,7 @@
 from PyQt5 import QtCore, QtWidgets, QtGui, uic
 from epics import caget, cainfo, caput
 from MyCAEpics import *
+from BrukerClient import *
 import sys
 import time
 
@@ -49,6 +50,18 @@ class gridscan(QtWidgets.QMainWindow):
 
         # get MyCAEpics instance
         self.ca = MyCAEpics()
+
+        self.bclient = BrukerClient()
+        if self.bclient.bcstatus == False :
+            mbox = QtGui.QMessageBox()
+            mbox.setWindowTitle("Bruker Comm Problem : BIS")
+            mbox.setIcon(QtGui.QMessageBox.Critical)
+            mbox.setText("Problem with Bruker communication")
+            mbox.setInformativeText("Check network")
+            mbox.exec_()
+            sys.exit(app.exit(-1))
+
+
 
         # set the data being sent to spectrometer for access to regularly plotting
         self.xdata = np.arange (0,2048,dtype=np.int32)
