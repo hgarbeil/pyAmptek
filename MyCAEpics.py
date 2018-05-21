@@ -6,6 +6,7 @@ import os
 import sys
 import subprocess
 from Amp import *
+from ExposTimer import *
 
 class MyCAEpics (QtCore.QThread):
 
@@ -37,6 +38,8 @@ class MyCAEpics (QtCore.QThread):
         
         self.single_take = False 
         self.scanfile = ""
+        self.mytimer = ExposTimer()
+        self.expos_secs = 0
 
 
     def abort_scan (self) :
@@ -54,11 +57,16 @@ class MyCAEpics (QtCore.QThread):
         self.y_inc = yrange * 2 / ysteps
         self.y_nsteps = ysteps
 
+    def set_expos_timer (self, nsecs) :
+        self.expos_secs = 300
+
     def get_position (self, mot_num) :
         if (mot_num == 0) :
             return caget('Dera:m3.VAL')
         if (mot_num == 1) :
             return caget('Dera:m2.VAL')
+
+
 
     def move_motor (self, mot_num, loc) :
         if (mot_num == 0) :
@@ -97,6 +105,10 @@ class MyCAEpics (QtCore.QThread):
             timestring = "%4d%02d%02d%02d%02d"%(ltime.tm_year,ltime.tm_mon, ltime.tm_mday,
                 ltime.tm_hour, ltime.tm_min)
             posfile = open ("%s_position.txt"%(self.outpref), 'w')
+            # start the instrument exposure time timer....
+            if (self.expos_secs > 0) :
+                self.mytimer.set_expos_time (self.expos_secs)
+                self.mytimer.start()
         else :
             self.y_nsteps = 1
             self.x_nsteps = 1
@@ -114,6 +126,16 @@ class MyCAEpics (QtCore.QThread):
                 if (self.abort_flag== True) :
                     break
                 if (self.single_take == False) :
+                    # get the amount of exposure time remaining on the instrument
+                    cur_etime = self.mytimer.get_current_etime ()
+                    # need to pause for acquisition
+                    if (self.acqtime >= cur_etime) :
+                        self.mytimer.stopclock()
+                        mmb = QtGui.QMessageBox.warning (self,'pyAmptek Exposure', 'Re-start exposure', QtGui.QMessageBox.O)
+                        self.mytimer.start()
+
+
+
                     xval = self.x_start + j * self.x_inc
                     outstr = '%d\t%f\t%f\r\n'%(count,xval,yval)
                     posfile.write (outstr)

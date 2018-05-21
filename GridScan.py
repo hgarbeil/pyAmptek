@@ -13,10 +13,10 @@ class gridscan(QtWidgets.QMainWindow):
     def __init__(self):
         QtWidgets.QMainWindow.__init__(self)
         self.ui = uic.loadUi("gridscan_mainwin.ui", self)
-        status = caput ("Dera:m3.VAL", 5.1)
+        curval = caget ("Dera:m3.VAL")
         self.curAcqSecPBar.setRange(0, 20)
         # if status is not equal to 1 messagebox that info and exit
-        if status != 1 :
+        if curval == None :
             mbox = QtGui.QMessageBox ()
             mbox.setWindowTitle ("GridScan Problem : EPICS")
             mbox.setIcon (QtGui.QMessageBox.Critical)
@@ -25,7 +25,6 @@ class gridscan(QtWidgets.QMainWindow):
             mbox.exec_()
             sys.exit (app.exit(-1))
 
-        curval = caget ("Dera:m3.VAL")
         s="%7.4f"%(curval)
         print "M3 position is : ", s
 
@@ -36,8 +35,6 @@ class gridscan(QtWidgets.QMainWindow):
         self.ui.x_MoveLocLE.setText(s)
 
         self.ui.set_status_label ("Ready")
-
-
 
         # y motors
         curval = caget("Dera:m2.VAL")
@@ -63,6 +60,7 @@ class gridscan(QtWidgets.QMainWindow):
         self.ca.update_position.connect (self.update_motors)
         self.ca.set_status.connect (self.set_status_label)
         self.ui.x_MoveButton.clicked.connect (self.move_x_motor)
+        self.ui.updateCenterButton.clicked.connect (self.set_center)
         self.ui.browseButton.clicked.connect (self.browse_prefix)
         self.ui.StartScanButton.clicked.connect (self.start_scan)
         self.ui.singleAcqButton.clicked.connect (self.single_take)
@@ -139,6 +137,14 @@ class gridscan(QtWidgets.QMainWindow):
         s="%5.3f"%val
         self.ui.y_CurLocLE.setText(s)
 
+    def set_center (self) :
+        xval = caget ("Dera:m3.VAL")
+        s = "%5.3f"%xval
+        self.ui.x_CenterLocLE.setText (s)
+        yval = caget ("Dera:m2.VAL")
+        s = "%5.3f"%yval
+        self.ui.y_CenterLocLE.setText (s)
+
     def start_scan (self) :
         #self.ca.set_pasfams ()
         x0 = float(self.ui.x_CenterLocLE.text())
@@ -152,9 +158,11 @@ class gridscan(QtWidgets.QMainWindow):
         self.ca.set_params( x0, xrange, xsteps, y0, yrange, ysteps)
         acquisition_time = int(self.ui.acquisitionTimeLE.text())
         acqStr = "%4d"%(acquisition_time)
+        expos_secs = int (self.ui.instExposLE.text())
         self.ui.acquisitionTimeLE.setText (acqStr)
         outprefix = self.ui.outprefLE.text()
         self.ca.set_acquisition_params (outprefix, acquisition_time)
+        self.ca.set_expos_timer (expos_secs)
         self.curAcqSecPBar.setValue(0)
         self.curAcqSecPBar.setRange (0, acquisition_time)
         self.fulltime = acquisition_time
@@ -187,6 +195,7 @@ class gridscan(QtWidgets.QMainWindow):
         self.ui.plotWidget.setMyData (self.xdata, self.ydata)
         if self.ca.acquire_flag :
             asecs = self.ca.get_acq_time ()
+            esecs = self.ca.get_cur_expos_time()
             if (asecs >= self.fulltime) :
                 asecs = self.fulltime
             self.curAcqSecPBar.setValue(asecs)
