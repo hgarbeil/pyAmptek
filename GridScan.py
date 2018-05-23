@@ -48,6 +48,11 @@ class gridscan(QtWidgets.QMainWindow):
         self.ui.y_NStepsLE.setText("10")
         self.ui.y_MoveLocLE.setText(s)
 
+        str = "%5d/t%5d"%(100,200)
+        mycoord = QtWidgets.QListWidgetItem (str, self.ui.coordsLocationWidget)
+        mycoord.setFlags (mycoord.flags | QtCore.Qt.ItemIsUserCheckable)
+        mycoord.setCheckState (QtCore.Qt.Checked)
+
         # get MyCAEpics instance
         self.ca = MyCAEpics()
 
