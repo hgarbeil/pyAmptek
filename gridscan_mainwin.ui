@@ -17,8 +17,8 @@
    <widget class="QPushButton" name="StartScanButton">
     <property name="geometry">
      <rect>
-      <x>530</x>
-      <y>580</y>
+      <x>210</x>
+      <y>520</y>
       <width>71</width>
       <height>28</height>
      </rect>
@@ -37,7 +37,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>460</y>
+      <y>670</y>
       <width>101</width>
       <height>16</height>
      </rect>
@@ -50,7 +50,7 @@
     <property name="geometry">
      <rect>
       <x>210</x>
-      <y>460</y>
+      <y>670</y>
       <width>75</width>
       <height>23</height>
      </rect>
@@ -63,7 +63,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>489</y>
+      <y>699</y>
       <width>261</width>
       <height>21</height>
      </rect>
@@ -76,7 +76,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>520</y>
+      <y>730</y>
       <width>271</width>
       <height>61</height>
      </rect>
@@ -99,7 +99,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>580</y>
+      <y>790</y>
       <width>261</width>
       <height>28</height>
      </rect>
@@ -147,8 +147,8 @@
    <widget class="QPushButton" name="singleAcqButton">
     <property name="geometry">
      <rect>
-      <x>330</x>
-      <y>580</y>
+      <x>10</x>
+      <y>520</y>
       <width>75</width>
       <height>26</height>
      </rect>
@@ -166,8 +166,8 @@
    <widget class="QPushButton" name="abortScanButton">
     <property name="geometry">
      <rect>
-      <x>610</x>
-      <y>580</y>
+      <x>290</x>
+      <y>520</y>
       <width>75</width>
       <height>26</height>
      </rect>
@@ -185,8 +185,8 @@
    <widget class="QPushButton" name="driveButton">
     <property name="geometry">
      <rect>
-      <x>420</x>
-      <y>580</y>
+      <x>100</x>
+      <y>520</y>
       <width>93</width>
       <height>28</height>
      </rect>
@@ -233,13 +233,13 @@
      <string>20</string>
     </property>
    </widget>
-   <widget class="QTabWidget" name="tabWidget">
+   <widget class="QTabWidget" name="ScanTypes">
     <property name="geometry">
      <rect>
       <x>10</x>
       <y>0</y>
       <width>321</width>
-      <height>431</height>
+      <height>511</height>
      </rect>
     </property>
     <property name="currentIndex">
@@ -583,7 +583,7 @@
        </rect>
       </property>
      </widget>
-     <widget class="QPushButton" name="pushButton">
+     <widget class="QPushButton" name="add_current_button">
       <property name="geometry">
        <rect>
         <x>10</x>
@@ -622,7 +622,7 @@
        <string>Y :</string>
       </property>
      </widget>
-     <widget class="QLineEdit" name="lineEdit">
+     <widget class="QLineEdit" name="x_customLE">
       <property name="geometry">
        <rect>
         <x>50</x>
@@ -632,7 +632,7 @@
        </rect>
       </property>
      </widget>
-     <widget class="QLineEdit" name="lineEdit_2">
+     <widget class="QLineEdit" name="y_customLE">
       <property name="geometry">
        <rect>
         <x>50</x>
@@ -642,6 +642,89 @@
        </rect>
       </property>
      </widget>
+    </widget>
+    <widget class="QWidget" name="tab_3">
+     <attribute name="title">
+      <string>EpicsScan</string>
+     </attribute>
+    </widget>
+   </widget>
+   <widget class="QGroupBox" name="phiLE_2">
+    <property name="geometry">
+     <rect>
+      <x>410</x>
+      <y>540</y>
+      <width>411</width>
+      <height>311</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>Bruker Status</string>
+    </property>
+    <widget class="QPushButton" name="shutter_status_button">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>40</y>
+       <width>131</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Shutter Closed</string>
+     </property>
+    </widget>
+    <widget class="QWidget" name="layoutWidget">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>80</y>
+       <width>191</width>
+       <height>121</height>
+      </rect>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_3">
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_16">
+        <property name="text">
+         <string>Distance :</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLineEdit" name="distanceLE"/>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="label_17">
+        <property name="text">
+         <string>2 Theta :</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QLineEdit" name="twothetaLE"/>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="label_18">
+        <property name="text">
+         <string>Omega :</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QLineEdit" name="omegaLE"/>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="label_19">
+        <property name="text">
+         <string>Phi :</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="QLineEdit" name="phiLE"/>
+      </item>
+     </layout>
     </widget>
    </widget>
   </widget>

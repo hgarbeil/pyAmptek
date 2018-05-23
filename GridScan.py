@@ -48,7 +48,9 @@ class gridscan(QtWidgets.QMainWindow):
         self.ui.y_NStepsLE.setText("10")
         self.ui.y_MoveLocLE.setText(s)
 
-        str = "%5d/t%5d"%(100,200)
+        xval =1.
+        yval =1.
+        str = "%5.3f %5.3f" % (xval, yval)
         mycoord = QtWidgets.QListWidgetItem (str, self.ui.coordsLocationWidget)
         mycoord.setFlags (mycoord.flags | QtCore.Qt.ItemIsUserCheckable)
         mycoord.setCheckState (QtCore.Qt.Checked)
@@ -56,6 +58,7 @@ class gridscan(QtWidgets.QMainWindow):
         # get MyCAEpics instance
         self.ca = MyCAEpics()
 
+        self.set_shutter_button (0)
         self.bclient = BrukerClient()
         if self.bclient.bcstatus == False :
             mbox = QtGui.QMessageBox()
@@ -92,6 +95,13 @@ class gridscan(QtWidgets.QMainWindow):
         self.ui.curAcqSecPBar.setRange (0, 20)
         self.ui.curAcqSecPBar.setValue (0)
         self.ui.curAcqSecPBar.setFormat ("%v")
+
+        # signal - slot from the BIS Client (BrukerClient)
+        self.bclient.update_values.clicked (self.bis_update)
+
+        # custom scan - list widget based
+        self.ui.add_current_button.clicked.connect (self.add_current_tolist)
+
         #self.mytimer = QtCore.QTimer ()
         #self.mytimer.timeout.connect (self.update_plot)
         #self.mytimer.start(1000)
@@ -169,6 +179,14 @@ class gridscan(QtWidgets.QMainWindow):
         s = "%5.3f"%yval
         self.ui.y_CenterLocLE.setText (s)
 
+    def add_current_tolist (self) :
+        xval = caget ("Dera:m3.VAL")
+        yval = caget ("Dera:m2.VAL")
+        s = "%5.3f %5.3f"%(xval,yval)
+        mycoord = QtWidgets.QListWidgetItem(s, self.ui.coordsLocationWidget)
+        mycoord.setFlags(mycoord.flags | QtCore.Qt.ItemIsUserCheckable)
+        mycoord.setCheckState(QtCore.Qt.Checked)
+
     def start_scan (self) :
         #self.ca.set_pasfams ()
         x0 = float(self.ui.x_CenterLocLE.text())
@@ -228,6 +246,23 @@ class gridscan(QtWidgets.QMainWindow):
             str1 = "%s\r\nElapsed time : %d"%(str0,asecs)
             print str1
             self.ui.plotInfoTE.setText (str1)
+
+    def bis_update (self) :
+        vals = [0.,0.,0.,0.,0.,0.]
+        self.bclient.get_values (vals)
+        self.set_shutter_button (int(vals[0]))
+        self.ui.distanceLE.setText ("%5.2f"%vals[5])
+        self.ui.twothetaLE.setText ("%5.2f"%vals[1])
+        self.ui.omegaLE.setText("%5.2f" % vals[2])
+        self.ui.phiLE.setText("%5.2f" % vals[3])
+
+    def set_shutter_button (self, state) :
+        if state == 0 :
+            self.ui.shutter_status_button.setText ("Shutter Closed")
+            self.ui.shutter_status_button.setStyleSheet("QtGui.QPushButton {background-color: white}")
+        if state == 1 :
+            self.ui.shutter_status_button.setText ("Shutter Open")
+            self.ui.shutter_status_button.setStyleSheet("QtGui.QPushButton {background-color: red}")
 
     def closeup (self) :
         self.bclient.close_shutter()

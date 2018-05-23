@@ -57,6 +57,7 @@ class BrukerClient (QtCore.QThread) :
         except socket.error, msg:
             print "Shutter status error : %s" % msg
 
+    # drive to position of 200mm, 2theta= -30 omega=0 and phi=180
     def drive_to_default (self) :
         message = "[drive /distance=20 /2theta=-30 /omega=0 /phi=180 ]\n"
         try :
@@ -76,7 +77,7 @@ class BrukerClient (QtCore.QThread) :
         except socket.error, msg :
             print "Drive error : %s"%msg
 
-
+    # open the shutter
     def open_shutter (self) :
         message = "[SHUTTER /STATUS=1]\n"
         try :
@@ -96,6 +97,7 @@ class BrukerClient (QtCore.QThread) :
         except socket.error, msg :
             print "Open shutter comm error : %s"%msg
 
+    # close the shutter
     def close_shutter (self) :
         message = "[SHUTTER /STATUS=0]\n"
         try :
@@ -115,6 +117,7 @@ class BrukerClient (QtCore.QThread) :
         except socket.error, msg :
             print "Close shutter comm error : %s"%msg
 
+    # called by other classes to get BIS values
     def get_values (self, vals) :
         vals[0] = self.shutter_status
         vals[1] = self.twotheta
@@ -123,17 +126,20 @@ class BrukerClient (QtCore.QThread) :
         vals[4] = self.chi
         vals[5] = self.distance
 
+    # thread method to check the status socket for any updates.
     def run (self) :
         self.bcrun = True
         while (self.bcrun) :
             data = self.status_sock.recv(BrukerClient.BSIZE)
-            #print data
+            #get shutter status if available
             if ("[SHUTTERSTATUS" in data) :
                 startloc = data.find("[SHUTTERSTATUS")
                 temp = data[startloc:]
                 eqloc = temp.find('=')
                 self.shutter_status  = int(temp[eqloc+1])
                 print "**shutter is ** ", self.shutter_status
+
+            #get angles if available
             if ("[ANGLESTATUS" in data) :
                 print data
                 startloc = data.find ("[ANGLESTATUS")
