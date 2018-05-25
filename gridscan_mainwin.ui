@@ -582,6 +582,9 @@
         <height>271</height>
        </rect>
       </property>
+      <property name="selectionMode">
+       <enum>QAbstractItemView::NoSelection</enum>
+      </property>
      </widget>
      <widget class="QPushButton" name="add_current_button">
       <property name="geometry">
@@ -734,7 +737,7 @@
      <x>0</x>
      <y>0</y>
      <width>1093</width>
-     <height>21</height>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

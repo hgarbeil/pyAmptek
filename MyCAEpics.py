@@ -16,6 +16,7 @@ class MyCAEpics (QtCore.QThread):
 
     def __init__(self):
         QtCore.QThread.__init__(self)
+        self.gridFlag = True
         self.x_start = 0.
         self.y_start = 0.
         self.y_nsteps = 10
@@ -52,6 +53,10 @@ class MyCAEpics (QtCore.QThread):
     def set_bruker_client (self, bc) :
         self.bclient = bc
 
+    def set_listscan (self, coordlist) :
+        self.gridFlag = False
+        self.scanpos_list = coordlist
+
     def set_params (self, x0, xrange, xsteps, y0, yrange, ysteps) :
         self.x_start = x0 - xrange
         self.x_inc = xrange * 2 / xsteps
@@ -60,6 +65,7 @@ class MyCAEpics (QtCore.QThread):
         self.y_start = y0 - yrange
         self.y_inc = yrange * 2 / ysteps
         self.y_nsteps = ysteps
+        self.gridFlag = True
 
     def set_expos_timer (self, nsecs) :
         self.expos_secs = 300
@@ -93,15 +99,56 @@ class MyCAEpics (QtCore.QThread):
         acqstring = "Acquiring single scan"
         self.set_status.emit(acqstring, 1)
         self.amptek.set_acquisition_time(self.acqtime)
-        self.acquire_flag = True;
+        self.acquire_flag = True
         self.single_take = True
+        self.gridFlag = True
         self.start()
         
 
 
     def run (self) :
-        self.abort_flag = False
         self.bclient.open_shutter()
+        self.abort_flag = False
+
+        # if working from listflag
+        if (self.gridFlag == False) :
+            self.acquire_flag = True;
+            xval = caget('Dera:m3.VAL')
+            count = 0
+            yval = caget('Dera:m2.VAL')
+            ltime = localtime()
+            timestring = "%4d%02d%02d%02d%02d" % (ltime.tm_year, ltime.tm_mon, ltime.tm_mday,
+                                                  ltime.tm_hour, ltime.tm_min)
+            posfile = open("%s_position.txt" % (self.outpref), 'w')
+            npos = len(self.scanpos_list)
+            for i in range (npos) :
+                xval = self.scanpos_list[i][0]
+                yval = self.scanpos_list[i][1]
+                self.move_motor(1,yval)
+                self.update_position.emit(1, yval)
+                QtCore.QThread.sleep(2)
+                self.move_motor(0,xval)
+                self.update_position.emit(0, xval)
+                if (self.abort_flag== True) :
+                    break
+                outstr = '%d\t%f\t%f\r\n' % (i, xval, yval)
+                posfile.write(outstr)
+                filstring = "%s_%04d.mca" % (self.outpref, count)
+                self.acquire_flag = True;
+                acqstring = "Acquiring %05d" % (i)
+                print "Scanning... file will be : ", filstring
+                self.set_status.emit(acqstring, 1)
+                self.amptek.set_spectrum_file(filstring)
+                self.amptek.set_acquisition_time(self.acqtime)
+                self.amptek.start_acquisition()
+            self.bclient.close_shutter()
+            self.set_status.emit("Ready", 0)
+            self.acquire_flag = False
+            posfile.close()
+            return
+
+
+        #if a gridscan or single scan
         if (self.single_take == False) :
             xval = caget ('Dera:m3.VAL')
             count = 0
@@ -132,13 +179,12 @@ class MyCAEpics (QtCore.QThread):
                     break
                 #if (self.single_take == False) :
                     # get the amount of exposure time remaining on the instrument
-                    cur_etime = self.mytimer.get_current_etime ()
+                    #cur_etime = self.mytimer.get_current_etime ()
                     # need to pause for acquisition
                     #if (self.acqtime >= cur_etime) :
                     #    self.mytimer.stopclock()
                     #    mmb = QtGui.QMessageBox.warning (self,'pyAmptek Exposure', 'Re-start exposure', QtGui.QMessageBox.O)
                     #    self.mytimer.start()
-
 
 
                     xval = self.x_start + j * self.x_inc

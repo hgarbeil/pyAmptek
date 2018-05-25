@@ -9,9 +9,13 @@ class BrukerClient (QtCore.QThread) :
     BSIZE = 1024
     serverip = '128.171.152.86'
     shutter_state = QtCore.pyqtSignal(bool)
+    newangles = QtCore.pyqtSignal ()
 
     def __init__(self):
         QtCore.QThread.__init__(self)
+
+
+    def connect (self) :
         try :
             self.shutter_status = 0
             self.chi = 0
@@ -21,6 +25,7 @@ class BrukerClient (QtCore.QThread) :
             self.bcrun = False
             self.bcstatus= True
             self.distance = 0
+
             self.command_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.command_sock.settimeout(10.)
             #   command_sock.setblocking(0)
@@ -41,8 +46,9 @@ class BrukerClient (QtCore.QThread) :
             print >> sys.stderr, 'connecting to %s port %s'%server_address
             self.status_sock.connect (server_address)
             #self.get_status()
+            #time.sleep (20)
             self.start()
-            time.sleep (20)
+            
             self.bcrun = False
         except socket.error, msg :
             print "Could not connect with socket : %s"%msg
@@ -59,7 +65,8 @@ class BrukerClient (QtCore.QThread) :
 
     # drive to position of 200mm, 2theta= -30 omega=0 and phi=180
     def drive_to_default (self) :
-        message = "[drive /distance=20 /2theta=-30 /omega=0 /phi=180 ]\n"
+        #message = "[drive /distance=20 /2theta=30 /omega=0 /phi=180 ]\n"
+        message = "[drive /distance=20 /2theta=10 /omega=-60 /phi=0 ]\n"
         try :
             print "sending message to bis"
             self.command_sock.send(message)
@@ -92,6 +99,7 @@ class BrukerClient (QtCore.QThread) :
                     loc = data.find ("[SHUTTER")
                     newstr = data[loc:]
                     print newstr
+
 
                 #print data
         except socket.error, msg :
@@ -130,7 +138,12 @@ class BrukerClient (QtCore.QThread) :
     def run (self) :
         self.bcrun = True
         while (self.bcrun) :
-            data = self.status_sock.recv(BrukerClient.BSIZE)
+            try :
+                data = self.status_sock.recv(1024)
+            except socket.error, msg :
+                #print "Thread read error: %s"%msg
+                self.sleep (3)
+                continue
             #get shutter status if available
             if ("[SHUTTERSTATUS" in data) :
                 startloc = data.find("[SHUTTERSTATUS")
@@ -141,7 +154,7 @@ class BrukerClient (QtCore.QThread) :
 
             #get angles if available
             if ("[ANGLESTATUS" in data) :
-                print data
+                #print data
                 startloc = data.find ("[ANGLESTATUS")
                 temp = data [startloc:]
                 eqsplit = temp.split('=')
@@ -153,6 +166,7 @@ class BrukerClient (QtCore.QThread) :
                 self.phi=float(subangles[2])
                 self.omega=float(subangles[1])
                 self.distance=float (eqsplit[2][0:eqsplit[2].find(']')])
+                self.newangles.emit()
 
             if (len(data) == 0) :
                 self.sleep (1)
@@ -160,7 +174,7 @@ class BrukerClient (QtCore.QThread) :
 
 
 
-bc = BrukerClient()
+#bc = BrukerClient()
 #bc.open_shutter()
 #bc.close_shutter()
-sys.exit(0)
+#sys.exit(0)

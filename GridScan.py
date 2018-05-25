@@ -34,6 +34,7 @@ class gridscan(QtWidgets.QMainWindow):
         self.ui.x_CenterLocLE.setText(s)
         self.ui.x_NStepsLE.setText("10")
         self.ui.x_MoveLocLE.setText(s)
+        self.ui.x_customLE.setText (s)
 
         self.ui.set_status_label ("Ready")
 
@@ -47,19 +48,24 @@ class gridscan(QtWidgets.QMainWindow):
         self.ui.y_CenterLocLE.setText(s)
         self.ui.y_NStepsLE.setText("10")
         self.ui.y_MoveLocLE.setText(s)
+        self.ui.y_customLE.setText(s)
 
         xval =1.
         yval =1.
         str = "%5.3f %5.3f" % (xval, yval)
-        mycoord = QtWidgets.QListWidgetItem (str, self.ui.coordsLocationWidget)
-        mycoord.setFlags (mycoord.flags | QtCore.Qt.ItemIsUserCheckable)
-        mycoord.setCheckState (QtCore.Qt.Checked)
+        #mycoord = QtWidgets.QListWidgetItem (str, self.ui.coordLocationsWidget)
+        #mycoord.setFlags (mycoord.flags() | QtCore.Qt.ItemIsUserCheckable | QtCore.Qt.ItemIsEditable | QtCore.Qt.ItemIsEnabled)
+        #mycoord.setForeground (QtGui.QBrush(QtGui.QColor.black))
+        #mycoord.setCheckState (QtCore.Qt.Checked)
+        #mycoord.
 
         # get MyCAEpics instance
         self.ca = MyCAEpics()
 
         self.set_shutter_button (0)
         self.bclient = BrukerClient()
+        self.bclient.connect()
+
         if self.bclient.bcstatus == False :
             mbox = QtGui.QMessageBox()
             mbox.setWindowTitle("Bruker Comm Problem : BIS")
@@ -84,6 +90,7 @@ class gridscan(QtWidgets.QMainWindow):
         self.ca.update_position.connect (self.update_motors)
         self.ca.set_status.connect (self.set_status_label)
         self.ui.x_MoveButton.clicked.connect (self.move_x_motor)
+        self.ui.y_MoveButton.clicked.connect(self.move_y_motor)
         self.ui.updateCenterButton.clicked.connect (self.set_center)
         self.ui.browseButton.clicked.connect (self.browse_prefix)
         self.ui.StartScanButton.clicked.connect (self.start_scan)
@@ -97,7 +104,7 @@ class gridscan(QtWidgets.QMainWindow):
         self.ui.curAcqSecPBar.setFormat ("%v")
 
         # signal - slot from the BIS Client (BrukerClient)
-        self.bclient.update_values.clicked (self.bis_update)
+        self.bclient.newangles.connect (self.bis_update)
 
         # custom scan - list widget based
         self.ui.add_current_button.clicked.connect (self.add_current_tolist)
@@ -148,28 +155,33 @@ class gridscan(QtWidgets.QMainWindow):
         print "move motor : %d to position %f"%(mot_num, pos)
         if (mot_num==0) :
             self.ui.x_CurLocLE.setText(s)
+            self.ui.x_customLE.setText(s)
         if (mot_num==1) :
             self.ui.y_CurLocLE.setText (s)
+            self.ui.y_customLE.setText(s)
+
         #if mot_num == 0 :
 
     def move_x_motor (self) :
-        val = self.ui.x_MoveLocLE.text().toFloat()[0]
+        val = float(self.ui.x_MoveLocLE.text())
         print "move motor : "
         self.ca.move_motor (0, val)
         time.sleep (1)
         val = self.ca.get_position (0)
         s="%5.3f"%val
         self.ui.x_CurLocLE.setText(s)
+        self.ui.x_customLE.setText(s)
 
 
     def move_y_motor (self) :
-        val = self.ui.y_MoveLocLE.text().toFloat()[0]
+        val = float(self.ui.y_MoveLocLE.text())
         print "move motor : "
         self.ca.move_motor (1, val)
         time.sleep (1)
         val = self.ca.get_position (1)
         s="%5.3f"%val
         self.ui.y_CurLocLE.setText(s)
+        self.ui.y_customLE.setText(s)
 
     def set_center (self) :
         xval = caget ("Dera:m3.VAL")
@@ -183,37 +195,70 @@ class gridscan(QtWidgets.QMainWindow):
         xval = caget ("Dera:m3.VAL")
         yval = caget ("Dera:m2.VAL")
         s = "%5.3f %5.3f"%(xval,yval)
-        mycoord = QtWidgets.QListWidgetItem(s, self.ui.coordsLocationWidget)
-        mycoord.setFlags(mycoord.flags | QtCore.Qt.ItemIsUserCheckable)
+        mycoord = QtWidgets.QListWidgetItem(s, self.ui.coordLocationsWidget)
+        mycoord.setFlags(mycoord.flags() | QtCore.Qt.ItemIsUserCheckable | QtCore.Qt.ItemIsEditable | QtCore.Qt.ItemIsEnabled)
+
         mycoord.setCheckState(QtCore.Qt.Checked)
+        # mycoord.setForeground (QtGui.QBrush(QtGui.QColor.black))
+        # mycoord.setCheckState (QtCore.Qt.Checked)
+
 
     def start_scan (self) :
-        #self.ca.set_pasfams ()
-        x0 = float(self.ui.x_CenterLocLE.text())
-        xsteps = int(self.ui.x_NStepsLE.text())
-        xrange = float (self.ui.x_RangeLE.text())
 
-        y0 = float(self.ui.y_CenterLocLE.text())
-        yrange = float(self.ui.y_RangeLE.text())
-        ysteps = int(self.ui.y_NStepsLE.text())
+        if self.ui.ScanTypes.currentIndex() == 0 :
+            #self.ca.set_pasfams ()
+            x0 = float(self.ui.x_CenterLocLE.text())
+            xsteps = int(self.ui.x_NStepsLE.text())
+            xrange = float (self.ui.x_RangeLE.text())
 
-        self.ca.set_params( x0, xrange, xsteps, y0, yrange, ysteps)
-        acquisition_time = int(self.ui.acquisitionTimeLE.text())
-        acqStr = "%4d"%(acquisition_time)
-        expos_secs = int (self.ui.instExposLE.text())
-        self.ui.acquisitionTimeLE.setText (acqStr)
-        outprefix = self.ui.outprefLE.text()
-        self.ca.set_acquisition_params (outprefix, acquisition_time)
-        #self.ca.set_expos_timer (expos_secs)
-        self.curAcqSecPBar.setValue(0)
-        self.curAcqSecPBar.setRange (0, acquisition_time)
-        self.fulltime = acquisition_time
-        self.ca.single_take = False
-        self.ca.start ()
+            y0 = float(self.ui.y_CenterLocLE.text())
+            yrange = float(self.ui.y_RangeLE.text())
+            ysteps = int(self.ui.y_NStepsLE.text())
+
+            self.ca.set_params( x0, xrange, xsteps, y0, yrange, ysteps)
+            acquisition_time = int(self.ui.acquisitionTimeLE.text())
+            acqStr = "%4d"%(acquisition_time)
+            #expos_secs = int (self.ui.instExposLE.text())
+            self.ui.acquisitionTimeLE.setText (acqStr)
+            outprefix = self.ui.outprefLE.text()
+            self.ca.set_acquisition_params (outprefix, acquisition_time)
+            #self.ca.set_expos_timer (expos_secs)
+            self.curAcqSecPBar.setValue(0)
+            self.curAcqSecPBar.setRange (0, acquisition_time)
+            self.fulltime = acquisition_time
+            self.ca.single_take = False
+            self.ca.start ()
+        if self.ui.ScanTypes.currentIndex()== 1 :
+            acquisition_time = int(self.ui.acquisitionTimeLE.text())
+            acqStr = "%4d" % (acquisition_time)
+            # expos_secs = int (self.ui.instExposLE.text())
+            self.ui.acquisitionTimeLE.setText(acqStr)
+            outprefix = self.ui.outprefLE.text()
+            self.ca.set_acquisition_params(outprefix, acquisition_time)
+            # self.ca.set_expos_timer (expos_secs)
+            self.curAcqSecPBar.setValue(0)
+            self.curAcqSecPBar.setRange(0, acquisition_time)
+            scanpositions=[]
+            self.read_scan_locations (scanpositions)
+            self.ca.set_listscan (scanpositions)
+            self.ca.start ()
+
+    # read the scan locations from the listwidget  with xy coords
+    def read_scan_locations (self, loclist) :
+        nlocs = self.ui.coordLocationsWidget.count()
+        for i in range (nlocs) :
+            myitem = self.ui.coordLocationsWidget.item(i)
+            if myitem.checkState() == 2 :
+                vals = myitem.text().split(' ')
+                vals_x = float(vals[0])
+                vals_y = float(vals[1])
+                loclist.append((vals_x,vals_y))
+        print loclist
 
     def abort_scan (self) :
         self.ca.abort_scan()
 
+    # open shutter but do not move motors, take a single collection at current location
     def single_take (self) :
         acquisition_time = int(self.ui.acquisitionTimeLE.text())
         self.ca.set_acquisition_time(acquisition_time)
