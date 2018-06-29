@@ -104,6 +104,7 @@ class gridscan(QtWidgets.QMainWindow):
         self.ui.curAcqSecPBar.setFormat ("%v")
 
         # signal - slot from the BIS Client (BrukerClient)
+        self.bclient.shutter_state.connect (self.set_shutter_button)
         self.bclient.newangles.connect (self.bis_update)
 
         # custom scan - list widget based
@@ -288,10 +289,10 @@ class gridscan(QtWidgets.QMainWindow):
             if (asecs >= self.fulltime) :
                 asecs = self.fulltime
             self.curAcqSecPBar.setValue(asecs)
-            print asecs
-            str0 = "Scan file : \r\n%s"%self.ca.scanfile
-            str1 = "%s\r\nElapsed time : %d"%(str0,asecs)
-            print str1
+            #print asecs
+            #str0 = "Scan file : \r\n%s"%self.ca.scanfile
+            #str1 = "%s\r\nElapsed time : %d"%(str0,asecs)
+            #print str1
             #self.ui.plotInfoTE.setText (str1)
 
     def bis_update (self) :
@@ -303,13 +304,19 @@ class gridscan(QtWidgets.QMainWindow):
         self.ui.omegaLE.setText("%5.2f" % vals[2])
         self.ui.phiLE.setText("%5.2f" % vals[3])
 
+    # called by bclient to update the shutter button
     def set_shutter_button (self, state) :
+        p = self.ui.shutter_status_button.palette()
+        
+        print "called shutter button set ", state
         if state == 0 :
             self.ui.shutter_status_button.setText ("Shutter Closed")
             self.ui.shutter_status_button.setStyleSheet("QtGui.QPushButton {background-color: white}")
+            p.setColor (self.ui.shutter_status_button.backgroundRole(), QtCore.Qt.white)
         if state == 1 :
             self.ui.shutter_status_button.setText ("Shutter Open")
-            self.ui.shutter_status_button.setStyleSheet("QtGui.QPushButton {background-color: red}")
+            self.ui.shutter_status_button.setStyleSheet("QtGui.QPushButton {background-color: yellow}")
+            p.setColor (self.ui.shutter_status_button.backgroundRole(), QtCore.Qt.yellow)
 
     def closeup (self) :
         self.bclient.close_shutter()

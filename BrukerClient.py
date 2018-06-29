@@ -8,7 +8,7 @@ class BrukerClient (QtCore.QThread) :
 
     BSIZE = 1024
     serverip = '128.171.152.86'
-    shutter_state = QtCore.pyqtSignal(bool)
+    shutter_state = QtCore.pyqtSignal(int)
     newangles = QtCore.pyqtSignal ()
 
     def __init__(self):
@@ -91,15 +91,17 @@ class BrukerClient (QtCore.QThread) :
             print "sending message to bis"
             self.command_sock.send(message)
             time.sleep(1)
+            self.shutter_state.emit(1)
+
             while (1) :
                 data = self.status_sock.recv (BrukerClient.BSIZE)
                 print data
                 if "[SHUTTERSTATUS" in data :
-                    print "found message"
+                    print "SHUTTER status string : "
                     loc = data.find ("[SHUTTER")
                     newstr = data[loc:]
                     print newstr
-
+            
 
                 #print data
         except socket.error, msg :
@@ -112,6 +114,7 @@ class BrukerClient (QtCore.QThread) :
             print "sending message to bis"
             self.command_sock.send(message)
             time.sleep(1)
+            self.shutter_state.emit(0)
             while (1) :
                 data = self.status_sock.recv (BrukerClient.BSIZE)
                 print data
@@ -120,6 +123,8 @@ class BrukerClient (QtCore.QThread) :
                     loc = data.find ("[SHUTTER")
                     newstr = data[loc:]
                     print newstr
+                
+                
 
                 #print data
         except socket.error, msg :
