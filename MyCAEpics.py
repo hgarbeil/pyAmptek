@@ -94,6 +94,10 @@ class MyCAEpics (QtCore.QThread):
     def get_acq_time (self) :
         isec = self.amptek.get_elapsed_secs()
         return isec
+    
+    def get_cur_expos_time (self) :
+        isec = self.amptek.get_elapsed_secs()
+        return isec
 
     def take_single (self) :
         acqstring = "Acquiring single scan"
@@ -133,7 +137,7 @@ class MyCAEpics (QtCore.QThread):
                     break
                 outstr = '%d\t%f\t%f\r\n' % (i, xval, yval)
                 posfile.write(outstr)
-                filstring = "%s_%04d.mca" % (self.outpref, count)
+                filstring = "%s_%04d.mca" % (self.outpref, i)
                 self.acquire_flag = True;
                 acqstring = "Acquiring %05d" % (i)
                 print "Scanning... file will be : ", filstring
@@ -177,7 +181,7 @@ class MyCAEpics (QtCore.QThread):
             for j in range (self.x_nsteps) :
                 if (self.abort_flag== True) :
                     break
-                #if (self.single_take == False) :
+                if (self.single_take == False) :
                     # get the amount of exposure time remaining on the instrument
                     #cur_etime = self.mytimer.get_current_etime ()
                     # need to pause for acquisition
@@ -206,8 +210,10 @@ class MyCAEpics (QtCore.QThread):
                     print "Scanning... file will be : ", filstring
                     self.set_status.emit(acqstring, 1)
                     self.amptek.set_spectrum_file (filstring)
-                if (self.single_take == False) :
-    					self.scanfile = filstring
+                    #if (self.single_take == False) :
+                if (self.single_take==True) :
+                    self.amptek.set_spectrum_file ("C:/Users/przem/junk.mca")
+
                 self.amptek.set_acquisition_time (self.acqtime)
                 self.amptek.start_acquisition()
                 

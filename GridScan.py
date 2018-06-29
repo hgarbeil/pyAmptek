@@ -109,9 +109,9 @@ class gridscan(QtWidgets.QMainWindow):
         # custom scan - list widget based
         self.ui.add_current_button.clicked.connect (self.add_current_tolist)
 
-        #self.mytimer = QtCore.QTimer ()
-        #self.mytimer.timeout.connect (self.update_plot)
-        #self.mytimer.start(1000)
+        self.mytimer = QtCore.QTimer ()
+        self.mytimer.timeout.connect (self.update_plot)
+        self.mytimer.start(1000)
         #self.fulltime = 20
 
 
@@ -131,7 +131,7 @@ class gridscan(QtWidgets.QMainWindow):
         self.ui.plotWidget.setMyData(self.xdata, self.ydata)
         outText = "Displayed MCA File : \r\n%s"%mcafile
         outText = "%s\r\nExposure Time : %f"%(outText, myvals[0])
-        self.ui.plotInfoTE.setText (outText)
+        #self.ui.plotInfoTE.setText (outText)
 
     def readMCAFile (self, fname, specdata, myvals, npts) :
         f = open (fname, 'r')
@@ -205,6 +205,7 @@ class gridscan(QtWidgets.QMainWindow):
 
     def start_scan (self) :
 
+        # Grid Scan
         if self.ui.ScanTypes.currentIndex() == 0 :
             #self.ca.set_pasfams ()
             x0 = float(self.ui.x_CenterLocLE.text())
@@ -228,6 +229,7 @@ class gridscan(QtWidgets.QMainWindow):
             self.fulltime = acquisition_time
             self.ca.single_take = False
             self.ca.start ()
+        # Scan locations
         if self.ui.ScanTypes.currentIndex()== 1 :
             acquisition_time = int(self.ui.acquisitionTimeLE.text())
             acqStr = "%4d" % (acquisition_time)
@@ -290,7 +292,7 @@ class gridscan(QtWidgets.QMainWindow):
             str0 = "Scan file : \r\n%s"%self.ca.scanfile
             str1 = "%s\r\nElapsed time : %d"%(str0,asecs)
             print str1
-            self.ui.plotInfoTE.setText (str1)
+            #self.ui.plotInfoTE.setText (str1)
 
     def bis_update (self) :
         vals = [0.,0.,0.,0.,0.,0.]
