@@ -311,12 +311,11 @@ class gridscan(QtWidgets.QMainWindow):
         print "called shutter button set ", state
         if state == 0 :
             self.ui.shutter_status_button.setText ("Shutter Closed")
-            self.ui.shutter_status_button.setStyleSheet("QtGui.QPushButton {background-color: white}")
-            p.setColor (self.ui.shutter_status_button.backgroundRole(), QtCore.Qt.white)
+            self.ui.shutter_status_button.setStyleSheet("background-color: white; color:black")
         if state == 1 :
             self.ui.shutter_status_button.setText ("Shutter Open")
-            self.ui.shutter_status_button.setStyleSheet("QtGui.QPushButton {background-color: yellow}")
-            p.setColor (self.ui.shutter_status_button.backgroundRole(), QtCore.Qt.yellow)
+            self.ui.shutter_status_button.setStyleSheet("background-color: yellow; color:red")
+            
 
     def closeup (self) :
         self.bclient.close_shutter()
