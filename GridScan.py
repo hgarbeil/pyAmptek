@@ -95,7 +95,8 @@ class gridscan(QtWidgets.QMainWindow):
         self.ui.browseButton.clicked.connect (self.browse_prefix)
         self.ui.StartScanButton.clicked.connect (self.start_scan)
         self.ui.singleAcqButton.clicked.connect (self.single_take)
-        self.ui.driveButton.clicked.connect (self.drive_bc_axes)
+        self.ui.updateAnglesButton.clicked.connect (self.drive_bc_specified)
+        self.ui.defaultAnglesButton.clicked.connect (self.drive_bc_default)
         self.ui.abortScanButton.clicked.connect (self.abort_scan)
         self.ui.actionLoad_mca_file.triggered.connect (self.load_mca)
         self.ui.exitButton.clicked.connect (self.closeup)
@@ -116,7 +117,14 @@ class gridscan(QtWidgets.QMainWindow):
         #self.fulltime = 20
 
 
-    def drive_bc_axes (self):
+    def drive_bc_specified (self):
+        dist = float(self.ui.distanceLE.text())
+        theta = float(self.ui.twothetaLE.text())
+        omega = float(self.ui.omegaLE.text())
+        phi = float (self.ui.phiLE.text())
+        self.bclient.drive_to_specified (dist, theta, omega, phi)
+        
+    def drive_bc_default (self) :
         self.bclient.drive_to_default ()
 
     def browse_prefix (self) :

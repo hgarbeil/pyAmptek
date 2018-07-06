@@ -66,7 +66,7 @@ class BrukerClient (QtCore.QThread) :
     # drive to position of 200mm, 2theta= -30 omega=0 and phi=180
     def drive_to_default (self) :
         #message = "[drive /distance=20 /2theta=30 /omega=0 /phi=180 ]\n"
-        message = "[drive /distance=20 /2theta=0 /omega=-60 /phi=0 ]\n"
+        message = "[drive /distance=20 /2theta=30 /omega=-45 /phi=0 ]\n"
         try :
             print "sending message to bis"
             self.command_sock.send(message)
@@ -79,10 +79,32 @@ class BrukerClient (QtCore.QThread) :
                     loc = data.find ("[AXES")
                     newstr = data[loc:]
                     print newstr
-
+        
                 #print data
         except socket.error, msg :
             print "Drive error : %s"%msg
+
+
+    def drive_to_specified (self, dist, theta, phi, omega) :
+        message = "[drive /distance=%f /2theta=%f /omega=%f /phi=%f]"%(dist,theta,phi,omega) 
+        try :
+            print "sending message to bis"
+            self.command_sock.send(message)
+            time.sleep(1)
+            while (1) :
+                data = self.status_sock.recv (1024)
+                print data
+                if "[AXES" in data :
+                    print "found message"
+                    loc = data.find ("[AXES")
+                    newstr = data[loc:]
+                    print newstr
+        
+                #print data
+        except socket.error, msg :
+            print "Drive error : %s"%msg
+
+
 
     # open the shutter
     def open_shutter (self) :

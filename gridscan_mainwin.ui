@@ -17,7 +17,7 @@
    <widget class="QPushButton" name="StartScanButton">
     <property name="geometry">
      <rect>
-      <x>210</x>
+      <x>100</x>
       <y>520</y>
       <width>71</width>
       <height>28</height>
@@ -166,7 +166,7 @@
    <widget class="QPushButton" name="abortScanButton">
     <property name="geometry">
      <rect>
-      <x>290</x>
+      <x>180</x>
       <y>520</y>
       <width>75</width>
       <height>26</height>
@@ -185,8 +185,8 @@
    <widget class="QPushButton" name="driveButton">
     <property name="geometry">
      <rect>
-      <x>100</x>
-      <y>520</y>
+      <x>10</x>
+      <y>570</y>
       <width>93</width>
       <height>28</height>
      </rect>
@@ -728,6 +728,32 @@
        <widget class="QLineEdit" name="phiLE"/>
       </item>
      </layout>
+    </widget>
+    <widget class="QPushButton" name="updateAnglesButton">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>220</y>
+       <width>101</width>
+       <height>28</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Drive</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="defaultAnglesButton">
+     <property name="geometry">
+      <rect>
+       <x>140</x>
+       <y>220</y>
+       <width>121</width>
+       <height>28</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Drive to Default</string>
+     </property>
     </widget>
    </widget>
   </widget>
