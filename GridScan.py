@@ -109,7 +109,10 @@ class gridscan(QtWidgets.QMainWindow):
         self.bclient.newangles.connect (self.bis_update)
 
         # custom scan - list widget based
+        # user specifies each position to scan
         self.ui.add_current_button.clicked.connect (self.add_current_tolist)
+        self.ui.restoreCoordsButton.clicked.connect (self.read_coords)
+        self.ui.saveCoordsButton.clicked.connect (self.save_coords)
 
         self.mytimer = QtCore.QTimer ()
         self.mytimer.timeout.connect (self.update_plot)
@@ -265,6 +268,47 @@ class gridscan(QtWidgets.QMainWindow):
                 vals_y = float(vals[1])
                 loclist.append((vals_x,vals_y))
         print loclist
+
+    def save_coords (self) :
+        # need to get a save file name
+        fname = QtGui.QFileDialog.getSaveFileName (self, "Output ASCII Coord File","",".txt")
+        nlocs = self.ui.coordLocationsWidget.count()
+        if (nlocs <1) :
+            return
+        try :
+            fout = open(fname, "w")
+            for i in range (nlocs) :
+                myitem = self.ui.coordLocationsWidget.item(i)
+                if myitem.checkState() < 2 :
+                    continue
+                fout.write (myitem)
+        except IOError :
+                print "could not write to : ", fname
+        fout.close()
+
+    def restore_coords (self) :
+        # need to get an existing file name
+        fname = QtGui.QFileDialog.getOpenFileName(self, "Input ASCII Coord File", "", ".txt")
+        try :
+            fin = open (fname, "r")
+
+            lines = fin.readlines ()
+            npts = lines.count()
+            if npts <= 0 :
+                print "file is empty "
+                return
+            self.ui.coordLocationsWidget.clear()
+            for lineval in lines :
+                mycoord = QtWidgets.QListWidgetItem(lineval, self.ui.coordLocationsWidget)
+                mycoord.setFlags(
+                mycoord.flags() | QtCore.Qt.ItemIsUserCheckable | QtCore.Qt.ItemIsEditable | QtCore.Qt.ItemIsEnabled)
+
+                mycoord.setCheckState(QtCore.Qt.Checked)
+            fin.close()
+        except IOError :
+                print "problem with file : ", fname
+
+
 
     def abort_scan (self) :
         self.ca.abort_scan()
