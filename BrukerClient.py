@@ -7,6 +7,7 @@ from PyQt5 import QtCore, QtGui
 class BrukerClient (QtCore.QThread) :
 
     BSIZE = 1024
+	#Change to Bruker Computer IP Address
     serverip = '128.171.152.86'
     shutter_state = QtCore.pyqtSignal(int)
     newangles = QtCore.pyqtSignal ()

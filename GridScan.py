@@ -111,7 +111,7 @@ class gridscan(QtWidgets.QMainWindow):
         # custom scan - list widget based
         # user specifies each position to scan
         self.ui.add_current_button.clicked.connect (self.add_current_tolist)
-        self.ui.restoreCoordsButton.clicked.connect (self.read_coords)
+        self.ui.restoreCoordsButton.clicked.connect (self.restore_coords)
         self.ui.saveCoordsButton.clicked.connect (self.save_coords)
 
         self.mytimer = QtCore.QTimer ()
@@ -276,24 +276,25 @@ class gridscan(QtWidgets.QMainWindow):
         if (nlocs <1) :
             return
         try :
-            fout = open(fname, "w")
+            fout = open(fname[0], "w")
             for i in range (nlocs) :
                 myitem = self.ui.coordLocationsWidget.item(i)
                 if myitem.checkState() < 2 :
                     continue
-                fout.write (myitem)
+                fout.writelines (myitem.text())
+                
         except IOError :
-                print "could not write to : ", fname
+                print "could not write to : ", fname[0]
         fout.close()
 
     def restore_coords (self) :
         # need to get an existing file name
-        fname = QtGui.QFileDialog.getOpenFileName(self, "Input ASCII Coord File", "", ".txt")
+        fname = QtGui.QFileDialog.getOpenFileName(self, "Input ASCII Coord File", "", "*.txt")
         try :
-            fin = open (fname, "r")
+            fin = open (fname[0], "r")
 
             lines = fin.readlines ()
-            npts = lines.count()
+            npts = len(lines)
             if npts <= 0 :
                 print "file is empty "
                 return
