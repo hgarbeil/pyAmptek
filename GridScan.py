@@ -293,13 +293,13 @@ class gridscan(QtWidgets.QMainWindow):
         try :
             fin = open (fname[0], "r")
 
-            lines = fin.readlines ()
-            npts = len(lines)
-            if npts <= 0 :
-                print "file is empty "
-                return
-            self.ui.coordLocationsWidget.clear()
-            for lineval in lines :
+            
+            #if npts <= 0 :
+            #   print "file is empty "
+            #   return
+            #self.ui.coordLocationsWidget.clear()
+			# read in one line at a time
+            for lineval in fin :
                 mycoord = QtWidgets.QListWidgetItem(lineval, self.ui.coordLocationsWidget)
                 mycoord.setFlags(
                 mycoord.flags() | QtCore.Qt.ItemIsUserCheckable | QtCore.Qt.ItemIsEditable | QtCore.Qt.ItemIsEnabled)
