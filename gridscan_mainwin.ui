@@ -19,7 +19,7 @@
      <rect>
       <x>100</x>
       <y>520</y>
-      <width>71</width>
+      <width>75</width>
       <height>28</height>
      </rect>
     </property>
@@ -49,9 +49,9 @@
    <widget class="QPushButton" name="browseButton">
     <property name="geometry">
      <rect>
-      <x>210</x>
+      <x>200</x>
       <y>670</y>
-      <width>75</width>
+      <width>81</width>
       <height>23</height>
      </rect>
     </property>
@@ -150,7 +150,7 @@
       <x>10</x>
       <y>520</y>
       <width>75</width>
-      <height>26</height>
+      <height>28</height>
      </rect>
     </property>
     <property name="minimumSize">
@@ -166,10 +166,10 @@
    <widget class="QPushButton" name="abortScanButton">
     <property name="geometry">
      <rect>
-      <x>180</x>
+      <x>190</x>
       <y>520</y>
       <width>75</width>
-      <height>26</height>
+      <height>28</height>
      </rect>
     </property>
     <property name="minimumSize">
@@ -591,7 +591,7 @@
        <rect>
         <x>10</x>
         <y>340</y>
-        <width>181</width>
+        <width>261</width>
         <height>23</height>
        </rect>
       </property>
@@ -615,7 +615,7 @@
      <widget class="QLabel" name="label_15">
       <property name="geometry">
        <rect>
-        <x>100</x>
+        <x>140</x>
         <y>310</y>
         <width>21</width>
         <height>16</height>
@@ -630,7 +630,7 @@
        <rect>
         <x>40</x>
         <y>310</y>
-        <width>41</width>
+        <width>71</width>
         <height>20</height>
        </rect>
       </property>
@@ -638,9 +638,9 @@
      <widget class="QLineEdit" name="y_customLE">
       <property name="geometry">
        <rect>
-        <x>120</x>
+        <x>160</x>
         <y>310</y>
-        <width>41</width>
+        <width>71</width>
         <height>20</height>
        </rect>
       </property>
@@ -650,7 +650,7 @@
        <rect>
         <x>10</x>
         <y>380</y>
-        <width>91</width>
+        <width>121</width>
         <height>23</height>
        </rect>
       </property>
@@ -661,9 +661,9 @@
      <widget class="QPushButton" name="restoreCoordsButton">
       <property name="geometry">
        <rect>
-        <x>110</x>
+        <x>150</x>
         <y>380</y>
-        <width>91</width>
+        <width>121</width>
         <height>23</height>
        </rect>
       </property>
@@ -789,7 +789,7 @@
      <x>0</x>
      <y>0</y>
      <width>1093</width>
-     <height>21</height>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

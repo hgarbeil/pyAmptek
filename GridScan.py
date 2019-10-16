@@ -271,7 +271,7 @@ class gridscan(QtWidgets.QMainWindow):
 
     def save_coords (self) :
         # need to get a save file name
-        fname = QtGui.QFileDialog.getSaveFileName (self, "Output ASCII Coord File","",".txt")
+        fname = QtGui.QFileDialog.getSaveFileName (self, "Output ASCII Coord File","","*.txt")
         nlocs = self.ui.coordLocationsWidget.count()
         if (nlocs <1) :
             return
@@ -281,7 +281,8 @@ class gridscan(QtWidgets.QMainWindow):
                 myitem = self.ui.coordLocationsWidget.item(i)
                 if myitem.checkState() < 2 :
                     continue
-                fout.writelines (myitem.text())
+                fout.write (myitem.text()+"\n")
+                print myitem.text()
                 
         except IOError :
                 print "could not write to : ", fname[0]
@@ -300,6 +301,7 @@ class gridscan(QtWidgets.QMainWindow):
             #self.ui.coordLocationsWidget.clear()
 			# read in one line at a time
             for lineval in fin :
+                lineval = lineval.split("\n")[0]
                 mycoord = QtWidgets.QListWidgetItem(lineval, self.ui.coordLocationsWidget)
                 mycoord.setFlags(
                 mycoord.flags() | QtCore.Qt.ItemIsUserCheckable | QtCore.Qt.ItemIsEditable | QtCore.Qt.ItemIsEnabled)

@@ -2,7 +2,7 @@ import ctypes
 import numpy as np
 
 # Specify location of dll file, which is usually in subdirectory
-amplib = ctypes.cdll.LoadLibrary(r"C://Users/xxinn//workdir//pyAmptek//X123.dll")
+amplib = ctypes.cdll.LoadLibrary(r"C://Users//przem//workdir//pyAmptek//X123.dll")
 #amplib = ctypes.cdll.LoadLibrary(r"X123.dll")
 
 class Amp(object):
