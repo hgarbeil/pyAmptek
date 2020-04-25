@@ -50,9 +50,13 @@ class gridscan(QtWidgets.QMainWindow):
         self.ui.y_MoveLocLE.setText(s)
         self.ui.y_customLE.setText(s)
 
+
+
         xval =1.
         yval =1.
-        str = "%5.3f %5.3f" % (xval, yval)
+        zval =1.
+
+        str = "%5.3f %5.3f %5.3f" % (xval, yval, zval)
         #mycoord = QtWidgets.QListWidgetItem (str, self.ui.coordLocationsWidget)
         #mycoord.setFlags (mycoord.flags() | QtCore.Qt.ItemIsUserCheckable | QtCore.Qt.ItemIsEditable | QtCore.Qt.ItemIsEnabled)
         #mycoord.setForeground (QtGui.QBrush(QtGui.QColor.black))
@@ -125,7 +129,8 @@ class gridscan(QtWidgets.QMainWindow):
         theta = float(self.ui.twothetaLE.text())
         omega = float(self.ui.omegaLE.text())
         phi = float (self.ui.phiLE.text())
-        self.bclient.drive_to_specified (dist, theta, omega, phi)
+        self.bclient.execute_scan(dist, theta, omega, phi)
+        #self.bclient.drive_to_specified (dist, theta, omega, phi)
         
     def drive_bc_default (self) :
         self.bclient.drive_to_default ()
@@ -171,6 +176,9 @@ class gridscan(QtWidgets.QMainWindow):
         if (mot_num==1) :
             self.ui.y_CurLocLE.setText (s)
             self.ui.y_customLE.setText(s)
+        if (mot_num==2) :
+            self.ui.z_CurLocLE.setText (s)
+            self.ui.z_customLE.setText(s)
 
         #if mot_num == 0 :
 
@@ -195,6 +203,16 @@ class gridscan(QtWidgets.QMainWindow):
         self.ui.y_CurLocLE.setText(s)
         self.ui.y_customLE.setText(s)
 
+    def move_z_motor(self):
+        val = float(self.ui.z_MoveLocLE.text())
+        print "move motor : "
+        self.ca.move_motor(2, val)
+        time.sleep(1)
+        val = self.ca.get_position(2)
+        s = "%5.3f" % val
+        self.ui.z_CurLocLE.setText(s)
+        self.ui.z_customLE.setText(s)
+
     def set_center (self) :
         xval = caget ("Dera:m3.VAL")
         s = "%5.3f"%xval
@@ -206,7 +224,8 @@ class gridscan(QtWidgets.QMainWindow):
     def add_current_tolist (self) :
         xval = caget ("Dera:m3.VAL")
         yval = caget ("Dera:m2.VAL")
-        s = "%5.3f %5.3f"%(xval,yval)
+        zval = caget ("Dera:m1.VAL")
+        s = "%5.3f %5.3f %5.3f"%(xval,yval,zval)
         mycoord = QtWidgets.QListWidgetItem(s, self.ui.coordLocationsWidget)
         mycoord.setFlags(mycoord.flags() | QtCore.Qt.ItemIsUserCheckable | QtCore.Qt.ItemIsEditable | QtCore.Qt.ItemIsEnabled)
 
@@ -266,7 +285,8 @@ class gridscan(QtWidgets.QMainWindow):
                 vals = myitem.text().split(' ')
                 vals_x = float(vals[0])
                 vals_y = float(vals[1])
-                loclist.append((vals_x,vals_y))
+                vals_z = float(vals[2])
+                loclist.append((vals_x,vals_y,vals_z))
         print loclist
 
     def save_coords (self) :

@@ -602,7 +602,7 @@
      <widget class="QLabel" name="label_14">
       <property name="geometry">
        <rect>
-        <x>20</x>
+        <x>0</x>
         <y>310</y>
         <width>47</width>
         <height>13</height>
@@ -615,7 +615,7 @@
      <widget class="QLabel" name="label_15">
       <property name="geometry">
        <rect>
-        <x>140</x>
+        <x>100</x>
         <y>310</y>
         <width>21</width>
         <height>16</height>
@@ -628,7 +628,7 @@
      <widget class="QLineEdit" name="x_customLE">
       <property name="geometry">
        <rect>
-        <x>40</x>
+        <x>20</x>
         <y>310</y>
         <width>71</width>
         <height>20</height>
@@ -638,7 +638,7 @@
      <widget class="QLineEdit" name="y_customLE">
       <property name="geometry">
        <rect>
-        <x>160</x>
+        <x>120</x>
         <y>310</y>
         <width>71</width>
         <height>20</height>
@@ -649,7 +649,7 @@
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>380</y>
+        <y>440</y>
         <width>121</width>
         <height>23</height>
        </rect>
@@ -662,13 +662,49 @@
       <property name="geometry">
        <rect>
         <x>150</x>
-        <y>380</y>
+        <y>440</y>
         <width>121</width>
         <height>23</height>
        </rect>
       </property>
       <property name="text">
        <string>Restore Coords</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_20">
+      <property name="geometry">
+       <rect>
+        <x>200</x>
+        <y>310</y>
+        <width>21</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Z:</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="z_customLE">
+      <property name="geometry">
+       <rect>
+        <x>220</x>
+        <y>310</y>
+        <width>71</width>
+        <height>20</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="add_current_button_2">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>370</y>
+        <width>261</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Move to Saved Location</string>
       </property>
      </widget>
     </widget>
@@ -759,7 +795,7 @@
      <property name="geometry">
       <rect>
        <x>30</x>
-       <y>190</y>
+       <y>180</y>
        <width>101</width>
        <height>28</height>
       </rect>
@@ -772,13 +808,26 @@
      <property name="geometry">
       <rect>
        <x>140</x>
-       <y>190</y>
+       <y>180</y>
        <width>121</width>
        <height>28</height>
       </rect>
      </property>
      <property name="text">
       <string>Drive to Default</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="CollectXRD">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>210</y>
+       <width>101</width>
+       <height>28</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Collect</string>
      </property>
     </widget>
    </widget>

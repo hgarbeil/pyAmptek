@@ -105,7 +105,47 @@ class BrukerClient (QtCore.QThread) :
         except socket.error, msg :
             print "Drive error : %s"%msg
 
+    def execute_scan(self, dist, theta, phi, omega):
+        self.drive_to_specified(dist, theta, phi, omega)
+        fname_template="d:\\frames\lysozyme_##_####.sfrm"
+        rownumber = 1
+        runnumber = 56 # need
+        firstimagenumber = 1
+        rotaxis = 2
+        scansinrun = 5 # need - number of images to collect
+        scantime = 5.0 # need - time per image
+        width = 1.0 # need - angular width of one image
+        
 
+        print "--- AddRun"
+
+        me = "[addrun /RowNumber=%d /RunNumber=%d /FirstImageNumber=%d  /RotAxis=%d  /scansInRun=%d" \
+        "/scanTime=%f /Width=%f]"%(rownumber,runnumber,firstimagenumber,rotaxis,scansinrun,scantime,width)
+        print me
+
+
+        try:
+            print "sending message to bis"
+            self.command_sock.send(me)
+            time.sleep(1)
+            while (1):
+                data = self.status_sock.recv(1024)
+                print data
+                # print data
+        except socket.error, msg:
+            print "Addrun error : %s" % msg
+        message = "[scans /FilenameTemplate=%s]" % (fname_template)
+        print message
+        try:
+            print "sending message to bis"
+            self.command_sock.send(message)
+            time.sleep(1)
+            while (1):
+                data = self.status_sock.recv(1024)
+                print data
+                # print data
+        except socket.error, msg:
+            print "Scans error : %s" % msg
 
     # open the shutter
     def open_shutter (self) :
