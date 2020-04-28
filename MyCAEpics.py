@@ -75,14 +75,18 @@ class MyCAEpics (QtCore.QThread):
             return caget('Dera:m3.VAL')
         if (mot_num == 1) :
             return caget('Dera:m2.VAL')
+        if (mot_num == 2) :
+            return caget('Dera:m1.VAL')
 
 
-
+    # add "2" motor move
     def move_motor (self, mot_num, loc) :
         if (mot_num == 0) :
             caput('Dera:m3.VAL',loc)
         if (mot_num == 1) :
             caput ('Dera:m2.VAL', loc)
+        if (mot_num == 2) :
+            caput ('Dera:m1.VAL', loc)
 
     def set_acquisition_params (self, ofil, atime) :
         self.outpref = ofil
@@ -120,6 +124,7 @@ class MyCAEpics (QtCore.QThread):
             xval = caget('Dera:m3.VAL')
             count = 0
             yval = caget('Dera:m2.VAL')
+            zval = caget('Dera:m1.VAL')
             ltime = localtime()
             timestring = "%4d%02d%02d%02d%02d" % (ltime.tm_year, ltime.tm_mon, ltime.tm_mday,
                                                   ltime.tm_hour, ltime.tm_min)
@@ -135,7 +140,7 @@ class MyCAEpics (QtCore.QThread):
                 self.update_position.emit(0, xval)
                 if (self.abort_flag== True) :
                     break
-                outstr = '%d\t%f\t%f\r\n' % (i, xval, yval)
+                outstr = '%d\t%f\t%f\t%f\r\n' % (i, xval, yval, zval)
                 posfile.write(outstr)
                 filstring = "%s_%04d.mca" % (self.outpref, i)
                 self.acquire_flag = True;

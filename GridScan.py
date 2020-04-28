@@ -97,16 +97,23 @@ class gridscan(QtWidgets.QMainWindow):
         self.ui.y_MoveButton.clicked.connect(self.move_y_motor)
         self.ui.updateCenterButton.clicked.connect (self.set_center)
         self.ui.browseButton.clicked.connect (self.browse_prefix)
-        self.ui.StartScanButton.clicked.connect (self.start_scan)
-        self.ui.singleAcqButton.clicked.connect (self.single_take)
+
+
+
         self.ui.updateAnglesButton.clicked.connect (self.drive_bc_specified)
         self.ui.defaultAnglesButton.clicked.connect (self.drive_bc_default)
-        self.ui.abortScanButton.clicked.connect (self.abort_scan)
+
         self.ui.actionLoad_mca_file.triggered.connect (self.load_mca)
-        self.ui.exitButton.clicked.connect (self.closeup)
+
         self.ui.curAcqSecPBar.setRange (0, 20)
         self.ui.curAcqSecPBar.setValue (0)
         self.ui.curAcqSecPBar.setFormat ("%v")
+
+        # collect from the XRF side of the UI
+        self.ui.StartScanButton.clicked.connect(self.start_scan)
+        self.ui.singleAcqButton.clicked.connect(self.single_take)
+        self.ui.abortScanButton.clicked.connect(self.abort_scan)
+        # there is also a drive button but not sure what that is driving to?
 
         # signal - slot from the BIS Client (BrukerClient)
         self.bclient.shutter_state.connect (self.set_shutter_button)
@@ -123,7 +130,11 @@ class gridscan(QtWidgets.QMainWindow):
         self.mytimer.start(1000)
         #self.fulltime = 20
 
+        # close the application
+        self.ui.exitButton.clicked.connect(self.closeup)
 
+
+    # drive_bc_specified
     def drive_bc_specified (self):
         dist = float(self.ui.distanceLE.text())
         theta = float(self.ui.twothetaLE.text())
@@ -234,7 +245,11 @@ class gridscan(QtWidgets.QMainWindow):
         # mycoord.setCheckState (QtCore.Qt.Checked)
 
 
+    # the start scan for XRF looks to see which tab widget is active, if in grid mode, reads params and starts the XRF Scan
+    # if in
     def start_scan (self) :
+        # we need a step here to drive to the Phi position to get the XRD out of the way,
+
 
         # Grid Scan
         if self.ui.ScanTypes.currentIndex() == 0 :
@@ -374,10 +389,21 @@ class gridscan(QtWidgets.QMainWindow):
         vals = [0.,0.,0.,0.,0.,0.]
         self.bclient.get_values (vals)
         self.set_shutter_button (int(vals[0]))
-        self.ui.distanceLE.setText ("%5.2f"%vals[5])
-        self.ui.twothetaLE.setText ("%5.2f"%vals[1])
-        self.ui.omegaLE.setText("%5.2f" % vals[2])
-        self.ui.phiLE.setText("%5.2f" % vals[3])
+        #self.ui.distanceLE.setText ("%5.2f"%vals[5])
+        #self.ui.twothetaLE.setText ("%5.2f"%vals[1])
+        #self.ui.omegaLE.setText("%5.2f" % vals[2])
+        #self.ui.phiLE.setText("%5.2f" % vals[3])
+        self.ui.curDistLE.setText ("%5.2f"%vals[5])
+        self.ui.curTwothetaLE("%5.2f"%vals[1])
+        self.ui.curPhiLE("%5.2f" % vals[3])
+        self.ui.curOmegaLE("%5.2f" % vals[2])
+
+    def set_image_params (self) :
+        nscans = int(self.ui.nscansRunLE.text())
+        secs = float (self.ui.timePerImageLE.text())
+        width = float (self.ui.widthLE.text())
+        runnum = int (self.ui.runnumLE.text())
+        self.bclient.set_image_params (runnum, nscans, secs, width)
 
     # called by bclient to update the shutter button
     def set_shutter_button (self, state) :

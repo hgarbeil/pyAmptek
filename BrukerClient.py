@@ -26,6 +26,10 @@ class BrukerClient (QtCore.QThread) :
             self.bcrun = False
             self.bcstatus= True
             self.distance = 0
+            self.scansinrun = 5 #scans per run
+            self.scantime = 5 #secs per image
+            self.width = 1 #angular width for each image
+            self.runnumber = 1
 
             self.command_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.command_sock.settimeout(10.)
@@ -105,22 +109,27 @@ class BrukerClient (QtCore.QThread) :
         except socket.error, msg :
             print "Drive error : %s"%msg
 
+
+    def set_image_params (self, runnum, nscans, scansec, w) :
+        self.runnumber = runnum
+        self.scansinrun = nscans
+        self.scantime = scansec
+        self.width = w
+
     def execute_scan(self, dist, theta, phi, omega):
         self.drive_to_specified(dist, theta, phi, omega)
         fname_template="d:\\frames\lysozyme_##_####.sfrm"
         rownumber = 1
-        runnumber = 56 # need
+        #runnumber = 56 # need
         firstimagenumber = 1
         rotaxis = 2
-        scansinrun = 5 # need - number of images to collect
-        scantime = 5.0 # need - time per image
-        width = 1.0 # need - angular width of one image
+
         
 
         print "--- AddRun"
 
         me = "[addrun /RowNumber=%d /RunNumber=%d /FirstImageNumber=%d  /RotAxis=%d  /scansInRun=%d" \
-        "/scanTime=%f /Width=%f]"%(rownumber,runnumber,firstimagenumber,rotaxis,scansinrun,scantime,width)
+        "/scanTime=%f /Width=%f]"%(rownumber,self.runnumber,firstimagenumber,rotaxis,self.scansinrun,self.scantime,self.width)
         print me
 
 

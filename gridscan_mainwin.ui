@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1093</width>
-    <height>840</height>
+    <width>1140</width>
+    <height>960</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,9 +17,9 @@
    <widget class="QPushButton" name="StartScanButton">
     <property name="geometry">
      <rect>
-      <x>100</x>
+      <x>10</x>
       <y>520</y>
-      <width>75</width>
+      <width>105</width>
       <height>28</height>
      </rect>
     </property>
@@ -37,8 +37,8 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>670</y>
-      <width>101</width>
+      <y>780</y>
+      <width>161</width>
       <height>16</height>
      </rect>
     </property>
@@ -49,8 +49,8 @@
    <widget class="QPushButton" name="browseButton">
     <property name="geometry">
      <rect>
-      <x>200</x>
-      <y>670</y>
+      <x>310</x>
+      <y>810</y>
       <width>81</width>
       <height>23</height>
      </rect>
@@ -63,7 +63,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>699</y>
+      <y>809</y>
       <width>261</width>
       <height>21</height>
      </rect>
@@ -76,7 +76,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>720</y>
+      <y>840</y>
       <width>271</width>
       <height>61</height>
      </rect>
@@ -99,7 +99,7 @@
     <property name="geometry">
      <rect>
       <x>830</x>
-      <y>760</y>
+      <y>870</y>
       <width>261</width>
       <height>28</height>
      </rect>
@@ -148,8 +148,8 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>520</y>
-      <width>75</width>
+      <y>560</y>
+      <width>105</width>
       <height>28</height>
      </rect>
     </property>
@@ -166,9 +166,9 @@
    <widget class="QPushButton" name="abortScanButton">
     <property name="geometry">
      <rect>
-      <x>190</x>
+      <x>120</x>
       <y>520</y>
-      <width>75</width>
+      <width>105</width>
       <height>28</height>
      </rect>
     </property>
@@ -185,9 +185,9 @@
    <widget class="QPushButton" name="driveButton">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>570</y>
-      <width>93</width>
+      <x>120</x>
+      <y>560</y>
+      <width>101</width>
       <height>28</height>
      </rect>
     </property>
@@ -198,7 +198,7 @@
    <widget class="QLabel" name="label_12">
     <property name="geometry">
      <rect>
-      <x>860</x>
+      <x>840</x>
       <y>531</y>
       <width>150</width>
       <height>16</height>
@@ -243,7 +243,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="tab">
      <attribute name="title">
@@ -577,9 +577,9 @@
       <property name="geometry">
        <rect>
         <x>20</x>
-        <y>20</y>
+        <y>50</y>
         <width>281</width>
-        <height>271</height>
+        <height>241</height>
        </rect>
       </property>
       <property name="selectionMode">
@@ -718,9 +718,9 @@
     <property name="geometry">
      <rect>
       <x>410</x>
-      <y>540</y>
+      <y>510</y>
       <width>411</width>
-      <height>251</height>
+      <height>391</height>
      </rect>
     </property>
     <property name="title">
@@ -729,73 +729,21 @@
     <widget class="QPushButton" name="shutter_status_button">
      <property name="geometry">
       <rect>
-       <x>30</x>
-       <y>20</y>
-       <width>131</width>
-       <height>23</height>
+       <x>280</x>
+       <y>30</y>
+       <width>121</width>
+       <height>51</height>
       </rect>
      </property>
      <property name="text">
       <string>Shutter Closed</string>
      </property>
     </widget>
-    <widget class="QWidget" name="layoutWidget">
-     <property name="geometry">
-      <rect>
-       <x>30</x>
-       <y>50</y>
-       <width>191</width>
-       <height>121</height>
-      </rect>
-     </property>
-     <layout class="QGridLayout" name="gridLayout_3">
-      <item row="0" column="0">
-       <widget class="QLabel" name="label_16">
-        <property name="text">
-         <string>Distance :</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QLineEdit" name="distanceLE"/>
-      </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="label_17">
-        <property name="text">
-         <string>2 Theta :</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1">
-       <widget class="QLineEdit" name="twothetaLE"/>
-      </item>
-      <item row="2" column="0">
-       <widget class="QLabel" name="label_18">
-        <property name="text">
-         <string>Omega :</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="1">
-       <widget class="QLineEdit" name="omegaLE"/>
-      </item>
-      <item row="3" column="0">
-       <widget class="QLabel" name="label_19">
-        <property name="text">
-         <string>Phi :</string>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="1">
-       <widget class="QLineEdit" name="phiLE"/>
-      </item>
-     </layout>
-    </widget>
     <widget class="QPushButton" name="updateAnglesButton">
      <property name="geometry">
       <rect>
-       <x>30</x>
-       <y>180</y>
+       <x>10</x>
+       <y>360</y>
        <width>101</width>
        <height>28</height>
       </rect>
@@ -808,7 +756,7 @@
      <property name="geometry">
       <rect>
        <x>140</x>
-       <y>180</y>
+       <y>360</y>
        <width>121</width>
        <height>28</height>
       </rect>
@@ -820,14 +768,240 @@
     <widget class="QPushButton" name="CollectXRD">
      <property name="geometry">
       <rect>
-       <x>30</x>
-       <y>210</y>
+       <x>280</x>
+       <y>360</y>
        <width>101</width>
        <height>28</height>
       </rect>
      </property>
      <property name="text">
-      <string>Collect</string>
+      <string>Collect XRD</string>
+     </property>
+    </widget>
+    <widget class="QWidget" name="">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>30</y>
+       <width>261</width>
+       <height>158</height>
+      </rect>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_3">
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_25">
+        <property name="text">
+         <string>Stage Pos.</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLabel" name="label_24">
+        <property name="text">
+         <string>Start</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2">
+       <widget class="QLabel" name="label_26">
+        <property name="text">
+         <string>Current</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="label_16">
+        <property name="minimumSize">
+         <size>
+          <width>91</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>Distance :</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QLineEdit" name="distanceLE"/>
+      </item>
+      <item row="1" column="2">
+       <widget class="QLineEdit" name="curDistLE">
+        <property name="readOnly">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="label_17">
+        <property name="text">
+         <string>2 Theta :</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QLineEdit" name="twothetaLE"/>
+      </item>
+      <item row="2" column="2">
+       <widget class="QLineEdit" name="curTwothetaLE">
+        <property name="readOnly">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="label_18">
+        <property name="text">
+         <string>Omega :</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="QLineEdit" name="omegaLE"/>
+      </item>
+      <item row="3" column="2">
+       <widget class="QLineEdit" name="curOmegaLE">
+        <property name="readOnly">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="0">
+       <widget class="QLabel" name="label_19">
+        <property name="text">
+         <string>Phi :</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="1">
+       <widget class="QLineEdit" name="phiLE"/>
+      </item>
+      <item row="4" column="2">
+       <widget class="QLineEdit" name="curPhiLE">
+        <property name="readOnly">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+    <widget class="QWidget" name="">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>200</y>
+       <width>260</width>
+       <height>132</height>
+      </rect>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_4">
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_27">
+        <property name="text">
+         <string>Run number : </string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLineEdit" name="runnumLE"/>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="label_21">
+        <property name="text">
+         <string>Images in run :</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QLineEdit" name="nscansRunLE">
+        <property name="text">
+         <string>5</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="label_22">
+        <property name="text">
+         <string>Time per image (s) :</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QLineEdit" name="timePerImageLE">
+        <property name="text">
+         <string>5</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="label_23">
+        <property name="text">
+         <string>Width (deg) :</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="QLineEdit" name="widthLE">
+        <property name="text">
+         <string>1.0</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </widget>
+   <widget class="QGroupBox" name="groupBox_4">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>600</y>
+      <width>120</width>
+      <height>121</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>Sensor</string>
+    </property>
+    <widget class="QRadioButton" name="xrfSelectRB">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>30</y>
+       <width>105</width>
+       <height>26</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>XRF</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
+    <widget class="QRadioButton" name="xrdSelectRB">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>60</y>
+       <width>105</width>
+       <height>26</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>XRD</string>
+     </property>
+    </widget>
+    <widget class="QRadioButton" name="bothSelectRB">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>90</y>
+       <width>105</width>
+       <height>26</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Both</string>
      </property>
     </widget>
    </widget>
@@ -837,8 +1011,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1093</width>
-     <height>26</height>
+     <width>1140</width>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
