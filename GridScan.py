@@ -14,7 +14,7 @@ class gridscan(QtWidgets.QMainWindow):
     def __init__(self):
         QtWidgets.QMainWindow.__init__(self)
         self.ui = uic.loadUi("gridscan_mainwin.ui", self)
-        curval = caget ("Dera:m3.VAL")
+        curval = caget ("Dera:m1.VAL")
         self.curAcqSecPBar.setRange(0, 20)
         # if status is not equal to 1 messagebox that info and exit
         if curval == None :
@@ -27,7 +27,7 @@ class gridscan(QtWidgets.QMainWindow):
             sys.exit (app.exit(-1))
 
         s="%7.4f"%(curval)
-        print "M3 position is : ", s
+        print "M1 position is : ", s
 
         self.ui.x_CurLocLE.setText(s)
         self.ui.x_RangeLE.setText (".2")
@@ -50,7 +50,13 @@ class gridscan(QtWidgets.QMainWindow):
         self.ui.y_MoveLocLE.setText(s)
         self.ui.y_customLE.setText(s)
 
+        # z motor
+        curval = caget("Dera:m3.VAL")
+        s = "%7.4f" % (curval)
+        print "M3 position is : ", s
 
+
+        self.ui.z_customLE.setText(s)
 
         xval =1.
         yval =1.
@@ -277,8 +283,14 @@ class gridscan(QtWidgets.QMainWindow):
         # mycoord.setCheckState (QtCore.Qt.Checked)
 
     def delete_selected (self) :
-        for SelectedItem in self.coordLocationsWidget.selectedItems():
-            self.coordLocationsWidget.takeItem(self.coordLocationsWidget.row(SelectedItem))
+        nitems = self.ui.coordLocationsWidget.model().rowCount()
+        print 'total items : ', nitems
+        myrow = self.ui.coordLocationsWidget.currentRow()
+        print myrow
+        #self.ui.coordsLocationsWidget.takeItem(1)
+        #for SelectedItem in self.coordLocationsWidget.selectedItems():
+        #    myrow = self.ui.coordLocationsWidget.row(SelectedItem)
+        self.ui.coordLocationsWidget.takeItem(myrow)
 
 
     # the start scan for XRF looks to see which tab widget is active, if in grid mode, reads params and starts the XRF Scan
@@ -431,9 +443,9 @@ class gridscan(QtWidgets.QMainWindow):
         #self.ui.omegaLE.setText("%5.2f" % vals[2])
         #self.ui.phiLE.setText("%5.2f" % vals[3])
         self.ui.curDistLE.setText ("%5.2f"%vals[5])
-        self.ui.curTwothetaLE("%5.2f"%vals[1])
-        self.ui.curPhiLE("%5.2f" % vals[3])
-        self.ui.curOmegaLE("%5.2f" % vals[2])
+        self.ui.curTwothetaLE.setText("%5.2f"%vals[1])
+        self.ui.curPhiLE.setText("%5.2f" % vals[3])
+        self.ui.curOmegaLE.setText("%5.2f" % vals[2])
 
 
 

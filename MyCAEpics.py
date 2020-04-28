@@ -80,13 +80,14 @@ class MyCAEpics (QtCore.QThread):
 
 
     # add "2" motor move
+    # changed motor numbers x,y,z is 1,2,3 was 3,2,1
     def move_motor (self, mot_num, loc) :
         if (mot_num == 0) :
-            caput('Dera:m3.VAL',loc)
+            caput('Dera:m1.VAL',loc)
         if (mot_num == 1) :
             caput ('Dera:m2.VAL', loc)
         if (mot_num == 2) :
-            caput ('Dera:m1.VAL', loc)
+            caput ('Dera:m3.VAL', loc)
 
     def set_acquisition_params (self, ofil, atime) :
         self.outpref = ofil
