@@ -169,8 +169,12 @@ class gridscan(QtWidgets.QMainWindow):
         self.drive_bc_specified()
         self.set_image_params()
         self.bclient.execute_scan(dist,theta, omega, phi)
+        outpref = self.ui.outprefLE.text()
+        outfile = outpref+'_XRD_##_###.sfrm'
+
         #collect
-        self.bclient.execute_scan
+        self.bclient.execute_scan (dist, theta, phi, omega, outfile)
+
 
 
     def browse_prefix (self) :

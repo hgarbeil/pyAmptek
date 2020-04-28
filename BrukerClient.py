@@ -116,9 +116,9 @@ class BrukerClient (QtCore.QThread) :
         self.scantime = scansec
         self.width = w
 
-    def execute_scan(self, dist, theta, phi, omega):
+    def execute_scan(self, dist, theta, phi, omega, outfile):
         self.drive_to_specified(dist, theta, phi, omega)
-        fname_template="d:\\frames\lysozyme_##_####.sfrm"
+        fname_template=outfile
         rownumber = 1
         #runnumber = 56 # need
         firstimagenumber = 1
