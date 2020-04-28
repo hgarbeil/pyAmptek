@@ -122,11 +122,13 @@ class gridscan(QtWidgets.QMainWindow):
         self.bclient.shutter_state.connect (self.set_shutter_button)
         self.bclient.newangles.connect (self.bis_update)
 
-        # custom scan - list widget based
+        # custom scan - list widget based coordinates for xyz stage motion
         # user specifies each position to scan
         self.ui.add_current_button.clicked.connect (self.add_current_tolist)
         self.ui.restoreCoordsButton.clicked.connect (self.restore_coords)
+        self.ui.delSelectedButton.clicked.connect (self.delete_selected)
         self.ui.saveCoordsButton.clicked.connect (self.save_coords)
+        self.ui.clearCoordsButton.clicked.connect (self.clear_coords)
 
         self.mytimer = QtCore.QTimer ()
         self.mytimer.timeout.connect (self.update_plot)
@@ -274,6 +276,10 @@ class gridscan(QtWidgets.QMainWindow):
         # mycoord.setForeground (QtGui.QBrush(QtGui.QColor.black))
         # mycoord.setCheckState (QtCore.Qt.Checked)
 
+    def delete_selected (self) :
+        for SelectedItem in self.coordLocationsWidget.selectedItems():
+            self.coordLocationsWidget.takeItem(self.coordLocationsWidget.row(SelectedItem))
+
 
     # the start scan for XRF looks to see which tab widget is active, if in grid mode, reads params and starts the XRF Scan
     # if in
@@ -353,6 +359,9 @@ class gridscan(QtWidgets.QMainWindow):
                 print "could not write to : ", fname[0]
         fout.close()
 
+    def clear_coords (self) :
+        self.ui.coordLocationsWidget.clear()
+
     def restore_coords (self) :
         # need to get an existing file name
         fname = QtGui.QFileDialog.getOpenFileName(self, "Input ASCII Coord File", "", "*.txt")
@@ -388,9 +397,7 @@ class gridscan(QtWidgets.QMainWindow):
         self.curAcqSecPBar.setValue(0)
         self.curAcqSecPBar.setRange(0, acquisition_time)
         self.fulltime = acquisition_time
-        self.ca.take_single() 
-        
-
+        self.ca.take_single()
 
     def set_status_label (self, str, state=0) :
         p = self.ui.statusLE.palette()
