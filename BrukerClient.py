@@ -124,8 +124,6 @@ class BrukerClient (QtCore.QThread) :
         firstimagenumber = 1
         rotaxis = 2
 
-        
-
         print "--- AddRun"
 
         me = "[addrun /RowNumber=%d /RunNumber=%d /FirstImageNumber=%d  /RotAxis=%d  /scansInRun=%d" \

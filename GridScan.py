@@ -99,12 +99,15 @@ class gridscan(QtWidgets.QMainWindow):
         self.ui.browseButton.clicked.connect (self.browse_prefix)
 
 
-
+        # on XRD Panel , these are the drive and drive to default buttons
         self.ui.updateAnglesButton.clicked.connect (self.drive_bc_specified)
         self.ui.defaultAnglesButton.clicked.connect (self.drive_bc_default)
+        # collect XRD
+        self.ui.collectXRDButton.clicked.connect (self.collect_XRD)
 
         self.ui.actionLoad_mca_file.triggered.connect (self.load_mca)
 
+        # progress bar
         self.ui.curAcqSecPBar.setRange (0, 20)
         self.ui.curAcqSecPBar.setValue (0)
         self.ui.curAcqSecPBar.setFormat ("%v")
@@ -134,17 +137,41 @@ class gridscan(QtWidgets.QMainWindow):
         self.ui.exitButton.clicked.connect(self.closeup)
 
 
-    # drive_bc_specified
+    # drive or drive_bc_specified
     def drive_bc_specified (self):
         dist = float(self.ui.distanceLE.text())
         theta = float(self.ui.twothetaLE.text())
         omega = float(self.ui.omegaLE.text())
         phi = float (self.ui.phiLE.text())
+        ######
+        # note that there is a scan execute here
         self.bclient.execute_scan(dist, theta, omega, phi)
         #self.bclient.drive_to_specified (dist, theta, omega, phi)
-        
+
+    # drive to default
     def drive_bc_default (self) :
         self.bclient.drive_to_default ()
+
+    def set_image_params(self):
+        nscans = int(self.ui.nscansRunLE.text())
+        secs = float(self.ui.timePerImageLE.text())
+        width = float(self.ui.widthLE.text())
+        runnum = int(self.ui.runnumLE.text())
+        self.bclient.set_image_params(runnum, nscans, secs, width)
+
+    # collect with the XRD detector, first driving to the specified location
+    def collect_XRD (self):
+        # read the fields off the display and start the collect
+        dist = float(self.ui.distanceLE.text())
+        theta = float(self.ui.twothetaLE.text())
+        omega = float(self.ui.omegaLE.text())
+        phi = float(self.ui.phiLE.text())
+        self.drive_bc_specified()
+        self.set_image_params()
+        self.bclient.execute_scan(dist,theta, omega, phi)
+        #collect
+        self.bclient.execute_scan
+
 
     def browse_prefix (self) :
         fname = QtGui.QFileDialog.getSaveFileName (self,"Output prefix name")
@@ -191,7 +218,6 @@ class gridscan(QtWidgets.QMainWindow):
             self.ui.z_CurLocLE.setText (s)
             self.ui.z_customLE.setText(s)
 
-        #if mot_num == 0 :
 
     def move_x_motor (self) :
         val = float(self.ui.x_MoveLocLE.text())
@@ -398,12 +424,7 @@ class gridscan(QtWidgets.QMainWindow):
         self.ui.curPhiLE("%5.2f" % vals[3])
         self.ui.curOmegaLE("%5.2f" % vals[2])
 
-    def set_image_params (self) :
-        nscans = int(self.ui.nscansRunLE.text())
-        secs = float (self.ui.timePerImageLE.text())
-        width = float (self.ui.widthLE.text())
-        runnum = int (self.ui.runnumLE.text())
-        self.bclient.set_image_params (runnum, nscans, secs, width)
+
 
     # called by bclient to update the shutter button
     def set_shutter_button (self, state) :
