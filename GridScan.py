@@ -167,7 +167,7 @@ class gridscan(QtWidgets.QMainWindow):
         #self.bclient.execute_scan(dist, theta, omega, phi)
         self.bclient.drive_to_specified (dist, theta, omega, phi)
 
-    self.drive_omega_0 (self) :
+    def drive_omega_0 (self) :
         dist = 20.
         theta = 0.
         omega = 0.
@@ -175,14 +175,14 @@ class gridscan(QtWidgets.QMainWindow):
         self.bclient.drive_to_specified (dist, theta, omega, phi)
 
 
-    self.drive_omega_60 (self) :
+    def drive_omega_60 (self) :
         dist = 20
         theta = 0.
         omega = 60.
         phi = 0.
         self.bclient.drive_to_specified (dist, theta, omega, phi)
 
-    self.drive_omega_105 (self) :
+    def drive_omega_105 (self) :
         dist = 20
         theta = 0.
         omega = 105.
