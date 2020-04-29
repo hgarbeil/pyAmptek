@@ -694,12 +694,12 @@
        <string>Delete Selected</string>
       </property>
      </widget>
-     <widget class="QWidget" name="">
+     <widget class="QWidget" name="layoutWidget">
       <property name="geometry">
        <rect>
         <x>10</x>
         <y>390</y>
-        <width>291</width>
+        <width>294</width>
         <height>31</height>
        </rect>
       </property>
@@ -737,7 +737,7 @@
    <widget class="QGroupBox" name="phiLE_2">
     <property name="geometry">
      <rect>
-      <x>410</x>
+      <x>400</x>
       <y>510</y>
       <width>411</width>
       <height>391</height>
@@ -759,32 +759,6 @@
       <string>Shutter Closed</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="updateAnglesButton">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>360</y>
-       <width>101</width>
-       <height>28</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Drive</string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="defaultAnglesButton">
-     <property name="geometry">
-      <rect>
-       <x>140</x>
-       <y>360</y>
-       <width>121</width>
-       <height>28</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Drive to Default</string>
-     </property>
-    </widget>
     <widget class="QPushButton" name="collectXRDButton">
      <property name="geometry">
       <rect>
@@ -798,34 +772,34 @@
       <string>Collect XRD</string>
      </property>
     </widget>
-    <widget class="QWidget" name="">
+    <widget class="QWidget" name="layoutWidget">
      <property name="geometry">
       <rect>
        <x>10</x>
        <y>30</y>
        <width>261</width>
-       <height>158</height>
+       <height>192</height>
       </rect>
      </property>
      <layout class="QGridLayout" name="gridLayout_3">
-      <item row="0" column="0">
-       <widget class="QLabel" name="label_25">
-        <property name="text">
-         <string>Stage Pos.</string>
+      <item row="2" column="2">
+       <widget class="QLineEdit" name="curTwothetaLE">
+        <property name="readOnly">
+         <bool>true</bool>
         </property>
        </widget>
       </item>
       <item row="0" column="1">
        <widget class="QLabel" name="label_24">
         <property name="text">
-         <string>Start</string>
+         <string>Target</string>
         </property>
        </widget>
       </item>
-      <item row="0" column="2">
-       <widget class="QLabel" name="label_26">
+      <item row="5" column="1">
+       <widget class="QLineEdit" name="phiLE">
         <property name="text">
-         <string>Current</string>
+         <string>0</string>
         </property>
        </widget>
       </item>
@@ -842,11 +816,50 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="1">
-       <widget class="QLineEdit" name="distanceLE"/>
+      <item row="3" column="0">
+       <widget class="QLabel" name="label_18">
+        <property name="text">
+         <string>Omega :</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2">
+       <widget class="QLabel" name="label_26">
+        <property name="text">
+         <string>Current</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_25">
+        <property name="text">
+         <string>Stage Pos.</string>
+        </property>
+       </widget>
       </item>
       <item row="1" column="2">
        <widget class="QLineEdit" name="curDistLE">
+        <property name="readOnly">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="2">
+       <widget class="QLineEdit" name="curPhiLE">
+        <property name="readOnly">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QLineEdit" name="distanceLE">
+        <property name="text">
+         <string>20</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="2">
+       <widget class="QLineEdit" name="curOmegaLE">
         <property name="readOnly">
          <bool>true</bool>
         </property>
@@ -860,68 +873,38 @@
        </widget>
       </item>
       <item row="2" column="1">
-       <widget class="QLineEdit" name="twothetaLE"/>
-      </item>
-      <item row="2" column="2">
-       <widget class="QLineEdit" name="curTwothetaLE">
-        <property name="readOnly">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="0">
-       <widget class="QLabel" name="label_18">
+       <widget class="QLineEdit" name="twothetaLE">
         <property name="text">
-         <string>Omega :</string>
+         <string>30</string>
         </property>
        </widget>
       </item>
-      <item row="3" column="1">
-       <widget class="QLineEdit" name="omegaLE"/>
-      </item>
-      <item row="3" column="2">
-       <widget class="QLineEdit" name="curOmegaLE">
-        <property name="readOnly">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="4" column="0">
+      <item row="5" column="0">
        <widget class="QLabel" name="label_19">
         <property name="text">
          <string>Phi :</string>
         </property>
        </widget>
       </item>
-      <item row="4" column="1">
-       <widget class="QLineEdit" name="phiLE"/>
-      </item>
-      <item row="4" column="2">
-       <widget class="QLineEdit" name="curPhiLE">
-        <property name="readOnly">
-         <bool>true</bool>
+      <item row="3" column="1">
+       <widget class="QLineEdit" name="omegaLE">
+        <property name="text">
+         <string>-45</string>
         </property>
        </widget>
       </item>
      </layout>
     </widget>
-    <widget class="QWidget" name="">
+    <widget class="QWidget" name="layoutWidget">
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>200</y>
+       <y>230</y>
        <width>260</width>
        <height>132</height>
       </rect>
      </property>
      <layout class="QGridLayout" name="gridLayout_4">
-      <item row="0" column="0">
-       <widget class="QLabel" name="label_27">
-        <property name="text">
-         <string>Run number : </string>
-        </property>
-       </widget>
-      </item>
       <item row="0" column="1">
        <widget class="QLineEdit" name="runnumLE"/>
       </item>
@@ -964,6 +947,60 @@
        <widget class="QLineEdit" name="widthLE">
         <property name="text">
          <string>1.0</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_27">
+        <property name="text">
+         <string>Run number : </string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+    <widget class="QWidget" name="">
+     <property name="geometry">
+      <rect>
+       <x>280</x>
+       <y>90</y>
+       <width>115</width>
+       <height>201</height>
+      </rect>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_7">
+      <item row="0" column="0">
+       <widget class="QPushButton" name="updateAnglesButton">
+        <property name="text">
+         <string>Drive</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QPushButton" name="defaultAnglesButton">
+        <property name="text">
+         <string>Drive to Default</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QPushButton" name="Omega_0_Button">
+        <property name="text">
+         <string>Omega 0</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QPushButton" name="Omega_60_Button">
+        <property name="text">
+         <string>Omega 60</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="0">
+       <widget class="QPushButton" name="Omega_105_Button">
+        <property name="text">
+         <string>Omega 105</string>
         </property>
        </widget>
       </item>
@@ -1038,7 +1075,7 @@
      <string>XRD Stash Position for XRF Scan</string>
     </property>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>163</x>

@@ -106,8 +106,15 @@ class gridscan(QtWidgets.QMainWindow):
 
 
         # on XRD Panel , these are the drive and drive to default buttons
+        # updateAngles - drive button
         self.ui.updateAnglesButton.clicked.connect (self.drive_bc_specified)
+        # defaultAngles - Drive Default
         self.ui.defaultAnglesButton.clicked.connect (self.drive_bc_default)
+        # Omega position buttons
+        self.ui.Omega_0_Button.clicked.connect (self.drive_omega_0)
+        self.ui.Omega_60_Button.clicked.connect(self.drive_omega_60)
+        self.ui.Omega_105_Button.clicked.connect(self.drive_omega_105)
+
         # collect XRD
         self.ui.collectXRDButton.clicked.connect (self.collect_XRD)
 
@@ -145,18 +152,45 @@ class gridscan(QtWidgets.QMainWindow):
         self.ui.exitButton.clicked.connect(self.closeup)
 
 
-    # drive or drive_bc_specified
+    # drive or drive_bc_specified, gets values from target LEs
     def drive_bc_specified (self):
         dist = float(self.ui.distanceLE.text())
         theta = float(self.ui.twothetaLE.text())
         omega = float(self.ui.omegaLE.text())
+        if omega < -30 or omega > 30 :
+            print 'theta out of bounds'
+            self.exceed_twotheta()
+            return
         phi = float (self.ui.phiLE.text())
         ######
         # note that there is a scan execute here
-        self.bclient.execute_scan(dist, theta, omega, phi)
-        #self.bclient.drive_to_specified (dist, theta, omega, phi)
+        #self.bclient.execute_scan(dist, theta, omega, phi)
+        self.bclient.drive_to_specified (dist, theta, omega, phi)
 
-    # drive to default
+    self.drive_omega_0 (self) :
+        dist = 20.
+        theta = 0.
+        omega = 0.
+        phi = 0.
+        self.bclient.drive_to_specified (dist, theta, omega, phi)
+
+
+    self.drive_omega_60 (self) :
+        dist = 20
+        theta = 0.
+        omega = 60.
+        phi = 0.
+        self.bclient.drive_to_specified (dist, theta, omega, phi)
+
+    self.drive_omega_105 (self) :
+        dist = 20
+        theta = 0.
+        omega = 105.
+        phi = 0.
+        self.bclient.drive_to_specified (dist, theta, omega, phi)
+
+
+    # drive to default, vals in bruker client py code
     def drive_bc_default (self) :
         self.bclient.drive_to_default ()
 
@@ -183,6 +217,13 @@ class gridscan(QtWidgets.QMainWindow):
         #collect
         self.bclient.execute_scan (dist, theta, phi, omega, outfile)
 
+    def exceed_twotheta (self) :
+        mbox = QtGui.QMessageBox()
+        mbox.setWindowTitle("Invalid Parameter")
+        mbox.setIcon(QtGui.QMessageBox.Critical)
+        mbox.setText("Reenter Two Theta Value")
+        mbox.setInformativeText("Abs (twotheta) >30")
+        mbox.exec_()
 
 
     def browse_prefix (self) :
