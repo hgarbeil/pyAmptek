@@ -590,7 +590,7 @@
       <property name="geometry">
        <rect>
         <x>30</x>
-        <y>320</y>
+        <y>290</y>
         <width>261</width>
         <height>23</height>
        </rect>
@@ -668,24 +668,24 @@
        </rect>
       </property>
      </widget>
-     <widget class="QPushButton" name="add_current_button_2">
+     <widget class="QPushButton" name="move_to_sel_button">
       <property name="geometry">
        <rect>
         <x>30</x>
-        <y>350</y>
+        <y>320</y>
         <width>261</width>
         <height>23</height>
        </rect>
       </property>
       <property name="text">
-       <string>Move to Saved Location</string>
+       <string>Move to Selected</string>
       </property>
      </widget>
      <widget class="QPushButton" name="delSelectedButton">
       <property name="geometry">
        <rect>
         <x>30</x>
-        <y>290</y>
+        <y>350</y>
         <width>261</width>
         <height>23</height>
        </rect>
