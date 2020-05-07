@@ -10,8 +10,8 @@ import sys
 import time
 
 class gridscan(QtWidgets.QMainWindow):
-
     def __init__(self):
+        self.scantype=1 # default XRD scan
         QtWidgets.QMainWindow.__init__(self)
         self.ui = uic.loadUi("gridscan_mainwin.ui", self)
         curval = caget ("Dera:m1.VAL")
@@ -76,6 +76,10 @@ class gridscan(QtWidgets.QMainWindow):
         self.bclient = BrukerClient()
         self.bclient.connect()
 
+        self.bclient.get_gonio_position()
+        self.bis_update()
+
+
         if self.bclient.bcstatus == False :
             mbox = QtGui.QMessageBox()
             mbox.setWindowTitle("Bruker Comm Problem : BIS")
@@ -104,6 +108,9 @@ class gridscan(QtWidgets.QMainWindow):
         self.ui.updateCenterButton.clicked.connect (self.set_center)
         self.ui.browseButton.clicked.connect (self.browse_prefix)
 
+        self.ui.xrdSelectRB.clicked.connect(self.change_scantype_to_XRD)
+        self.ui.xrfSelectRB.clicked.connect(self.change_scantype_to_XRF)
+        self.ui.bothSelectRB.clicked.connect(self.change_scantype_to_both)
 
         # on XRD Panel , these are the drive and drive to default buttons
         # updateAngles - drive button
@@ -151,13 +158,12 @@ class gridscan(QtWidgets.QMainWindow):
         # close the application
         self.ui.exitButton.clicked.connect(self.closeup)
 
-
-    # drive or drive_bc_specified, gets values from target LEs
+        # drive or drive_bc_specified, gets values from target LEs
     def drive_bc_specified (self):
         dist = float(self.ui.distanceLE.text())
         theta = float(self.ui.twothetaLE.text())
         omega = float(self.ui.omegaLE.text())
-        if omega < -30 or omega > 30 :
+        if theta < -30 or theta > 30 :
             print 'theta out of bounds'
             self.exceed_twotheta()
             return
@@ -165,40 +171,62 @@ class gridscan(QtWidgets.QMainWindow):
         ######
         # note that there is a scan execute here
         #self.bclient.execute_scan(dist, theta, omega, phi)
-        self.bclient.drive_to_specified (dist, theta, omega, phi)
+        self.bclient.drive_to_specified (dist, theta, phi, omega)
+        self.bclient.get_gonio_position()
+        self.bis_update()
+
+    def change_scantype_to_XRD (self):
+        print "XRD scan selected"
+        self.scantype=1
+
+    def change_scantype_to_XRF (self):
+        print "XRF scan selected"
+        self.scantype=0
+
+    def change_scantype_to_both (self):
+        print "Both scans selected"
+        self.scantype=2
 
     def drive_omega_0 (self) :
         dist = 20.
         theta = 0.
         omega = 0.
         phi = 0.
-        self.bclient.drive_to_specified (dist, theta, omega, phi)
+        self.bclient.drive_to_specified (dist, theta, phi, omega)
+        self.bclient.get_gonio_position()
+        self.bis_update()
 
 
     def drive_omega_60 (self) :
+        print "omega 60"
         dist = 20
         theta = 0.
         omega = 60.
         phi = 0.
-        self.bclient.drive_to_specified (dist, theta, omega, phi)
+        self.bclient.drive_to_specified (dist, theta, phi, omega)
+        self.bclient.get_gonio_position()
+        self.bis_update()
 
     def drive_omega_105 (self) :
         dist = 20
         theta = 0.
         omega = 105.
         phi = 0.
-        self.bclient.drive_to_specified (dist, theta, omega, phi)
+        self.bclient.drive_to_specified (dist, theta, phi, omega)
+        self.bclient.get_gonio_position()
+        self.bis_update()
 
 
-    # drive to default, vals in bruker client py code
+    # this is now used to reconnect to status socket and listen
     def drive_bc_default (self) :
+        self.bclient.reconnect()
         self.bclient.drive_to_default ()
 
-    def set_image_params(self):
+    def set_image_params(self, runnum):
         nscans = int(self.ui.nscansRunLE.text())
         secs = float(self.ui.timePerImageLE.text())
         width = float(self.ui.widthLE.text())
-        runnum = int(self.ui.runnumLE.text())
+        #runnum = int(self.ui.runnumLE.text())
         self.bclient.set_image_params(runnum, nscans, secs, width)
 
     # collect with the XRD detector, first driving to the specified location
@@ -208,14 +236,13 @@ class gridscan(QtWidgets.QMainWindow):
         theta = float(self.ui.twothetaLE.text())
         omega = float(self.ui.omegaLE.text())
         phi = float(self.ui.phiLE.text())
-        self.drive_bc_specified()
-        self.set_image_params()
-        self.bclient.execute_scan(dist,theta, omega, phi)
+        #self.drive_bc_specified()
+        runnum = int(self.ui.runnumLE.text())
+        self.set_image_params(runnum)
         outpref = self.ui.outprefLE.text()
-        outfile = outpref+'_XRD_##_###.sfrm'
+        outfile = outpref + '_XRD_##_####.sfrm'
+        noresponse=self.bclient.execute_scan(dist,theta, omega, phi, outfile)
 
-        #collect
-        self.bclient.execute_scan (dist, theta, phi, omega, outfile)
 
     def exceed_twotheta (self) :
         mbox = QtGui.QMessageBox()
@@ -225,6 +252,13 @@ class gridscan(QtWidgets.QMainWindow):
         mbox.setInformativeText("Abs (twotheta) >30")
         mbox.exec_()
 
+    def exceed_distance (self) :
+        mbox = QtGui.QMessageBox()
+        mbox.setWindowTitle("Invalid Parameter")
+        mbox.setIcon(QtGui.QMessageBox.Critical)
+        mbox.setText("Reenter Distance")
+        mbox.setInformativeText("7 <= Distance <= 20")
+        mbox.exec_()
 
     def browse_prefix (self) :
         fname = QtGui.QFileDialog.getSaveFileName (self,"Output prefix name")
@@ -312,9 +346,9 @@ class gridscan(QtWidgets.QMainWindow):
         self.ui.y_CenterLocLE.setText (s)
 
     def add_current_tolist (self) :
-        xval = caget ("Dera:m3.VAL")
+        xval = caget ("Dera:m1.VAL")
         yval = caget ("Dera:m2.VAL")
-        zval = caget ("Dera:m1.VAL")
+        zval = caget ("Dera:m3.VAL")
         s = "%5.3f %5.3f %5.3f"%(xval,yval,zval)
         mycoord = QtWidgets.QListWidgetItem(s, self.ui.coordLocationsWidget)
         mycoord.setFlags(mycoord.flags() | QtCore.Qt.ItemIsUserCheckable | QtCore.Qt.ItemIsEditable | QtCore.Qt.ItemIsEnabled)
@@ -338,10 +372,52 @@ class gridscan(QtWidgets.QMainWindow):
     # if in
     def start_scan (self) :
         # we need a step here to drive to the Phi position to get the XRD out of the way,
+      if self.scantype == 1:
+        print "XRD scan"
+
+        dist = float(self.ui.distanceLE.text())
+        theta = float(self.ui.twothetaLE.text())
+        omega = float(self.ui.omegaLE.text())
+        phi = float(self.ui.phiLE.text())
+        runnum = int(self.ui.runnumLE.text())
+        self.set_image_params(runnum)
+        outpref = self.ui.outprefLE.text()
+        outfile = outpref + '_XRD_##_####.sfrm'
+
+        scanpos = []
+        self.read_scan_locations(scanpos)
+        npos = len(scanpos)
+        nore=0
+        for i in range(npos):
+            if nore == 0:
+                xval = scanpos[i][0]
+                yval = scanpos[i][1]
+                zval = scanpos[i][2]
+
+                self.ca.move_motor(0, xval)
+                self.ca.move_motor(1, yval)
+                self.ca.move_motor(2, zval)
+
+                done = 0
+                while done == 0:
+                    time.sleep(0.5)
+                    x = self.ca.get_position(0)
+                    y = self.ca.get_position(1)
+                    z = self.ca.get_position(2)
+                    if abs(x-xval) <0.001 and abs(y-yval)<0.001 and abs(z-zval)<0.001: done = 1
+                runnum = runnum+1
+                self.set_image_params(runnum)
+                nore=self.bclient.execute_scan(dist, theta, omega, phi, outfile)
+                print "--- position", i, "finished"
+            else:
+                print "Connection with BIS has been lost"
 
 
-        # Grid Scan
-        if self.ui.ScanTypes.currentIndex() == 0 :
+      else:
+        if self.scantype == 0:
+          print "XRF scan"
+          # Grid Scan
+          if self.ui.ScanTypes.currentIndex() == 0 :
             #self.ca.set_pasfams ()
             x0 = float(self.ui.x_CenterLocLE.text())
             xsteps = int(self.ui.x_NStepsLE.text())
@@ -364,8 +440,8 @@ class gridscan(QtWidgets.QMainWindow):
             self.fulltime = acquisition_time
             self.ca.single_take = False
             self.ca.start ()
-        # Scan locations
-        if self.ui.ScanTypes.currentIndex()== 1 :
+          # Scan locations
+          if self.ui.ScanTypes.currentIndex()== 1 :
             acquisition_time = int(self.ui.acquisitionTimeLE.text())
             acqStr = "%4d" % (acquisition_time)
             # expos_secs = int (self.ui.instExposLE.text())
@@ -478,6 +554,7 @@ class gridscan(QtWidgets.QMainWindow):
     def bis_update (self) :
         vals = [0.,0.,0.,0.,0.,0.]
         self.bclient.get_values (vals)
+        #print "position update", vals
         self.set_shutter_button (int(vals[0]))
         #self.ui.distanceLE.setText ("%5.2f"%vals[5])
         #self.ui.twothetaLE.setText ("%5.2f"%vals[1])
@@ -493,15 +570,14 @@ class gridscan(QtWidgets.QMainWindow):
     # called by bclient to update the shutter button
     def set_shutter_button (self, state) :
         p = self.ui.shutter_status_button.palette()
-        
-        print "called shutter button set ", state
         if state == 0 :
             self.ui.shutter_status_button.setText ("Shutter Closed")
             self.ui.shutter_status_button.setStyleSheet("background-color: white; color:black")
         if state == 1 :
             self.ui.shutter_status_button.setText ("Shutter Open")
             self.ui.shutter_status_button.setStyleSheet("background-color: yellow; color:red")
-            
+
+
 
     def closeup (self) :
         self.bclient.close_shutter()

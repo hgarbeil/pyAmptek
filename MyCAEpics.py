@@ -72,11 +72,11 @@ class MyCAEpics (QtCore.QThread):
 
     def get_position (self, mot_num) :
         if (mot_num == 0) :
-            return caget('Dera:m3.VAL')
+            return caget('Dera:m1.VAL')
         if (mot_num == 1) :
             return caget('Dera:m2.VAL')
         if (mot_num == 2) :
-            return caget('Dera:m1.VAL')
+            return caget('Dera:m3.VAL')
 
 
     # add "2" motor move

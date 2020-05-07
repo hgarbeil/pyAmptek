@@ -39,11 +39,11 @@
       <x>20</x>
       <y>780</y>
       <width>161</width>
-      <height>16</height>
+      <height>30</height>
      </rect>
     </property>
     <property name="text">
-     <string>Output file prefix :</string>
+     <string>XRD putput file prefix :</string>
     </property>
    </widget>
    <widget class="QPushButton" name="browseButton">
@@ -69,7 +69,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>C:\X123Data\Spectrum_</string>
+     <string>D:\frames\guest\remote\Sample</string>
     </property>
    </widget>
    <widget class="QGroupBox" name="groupBox_3">
@@ -596,7 +596,7 @@
        </rect>
       </property>
       <property name="text">
-       <string>Add Current Location</string>
+       <string>Add current position</string>
       </property>
      </widget>
      <widget class="QLabel" name="label_14">
@@ -699,7 +699,7 @@
        <rect>
         <x>10</x>
         <y>390</y>
-        <width>294</width>
+        <width>299</width>
         <height>31</height>
        </rect>
       </property>
@@ -714,14 +714,14 @@
        <item row="0" column="1">
         <widget class="QPushButton" name="saveCoordsButton">
          <property name="text">
-          <string>Save Coords</string>
+          <string>Save positions</string>
          </property>
         </widget>
        </item>
        <item row="0" column="2">
         <widget class="QPushButton" name="restoreCoordsButton">
          <property name="text">
-          <string>Restore Coords</string>
+          <string>Open positions</string>
          </property>
         </widget>
        </item>
@@ -854,7 +854,7 @@
       <item row="1" column="1">
        <widget class="QLineEdit" name="distanceLE">
         <property name="text">
-         <string>20</string>
+         <string>7</string>
         </property>
        </widget>
       </item>
@@ -875,7 +875,7 @@
       <item row="2" column="1">
        <widget class="QLineEdit" name="twothetaLE">
         <property name="text">
-         <string>30</string>
+         <string>0</string>
         </property>
        </widget>
       </item>
@@ -889,7 +889,7 @@
       <item row="3" column="1">
        <widget class="QLineEdit" name="omegaLE">
         <property name="text">
-         <string>-45</string>
+         <string>-150</string>
         </property>
        </widget>
       </item>
@@ -906,7 +906,11 @@
      </property>
      <layout class="QGridLayout" name="gridLayout_4">
       <item row="0" column="1">
-       <widget class="QLineEdit" name="runnumLE"/>
+       <widget class="QLineEdit" name="runnumLE">
+        <property name="text">
+         <string>0</string>
+        </property>
+       </widget>
       </item>
       <item row="1" column="0">
        <widget class="QLabel" name="label_21">
@@ -918,7 +922,7 @@
       <item row="1" column="1">
        <widget class="QLineEdit" name="nscansRunLE">
         <property name="text">
-         <string>5</string>
+         <string>240</string>
         </property>
        </widget>
       </item>
@@ -932,7 +936,7 @@
       <item row="2" column="1">
        <widget class="QLineEdit" name="timePerImageLE">
         <property name="text">
-         <string>5</string>
+         <string>1</string>
         </property>
        </widget>
       </item>
@@ -946,7 +950,7 @@
       <item row="3" column="1">
        <widget class="QLineEdit" name="widthLE">
         <property name="text">
-         <string>1.0</string>
+         <string>0.5</string>
         </property>
        </widget>
       </item>
@@ -959,7 +963,7 @@
       </item>
      </layout>
     </widget>
-    <widget class="QWidget" name="">
+    <widget class="QWidget" name="layoutWidget">
      <property name="geometry">
       <rect>
        <x>280</x>
@@ -1032,7 +1036,7 @@
       <string>XRF</string>
      </property>
      <property name="checked">
-      <bool>true</bool>
+      <bool>false</bool>
      </property>
     </widget>
     <widget class="QRadioButton" name="xrdSelectRB">
@@ -1046,6 +1050,9 @@
      </property>
      <property name="text">
       <string>XRD</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
      </property>
     </widget>
     <widget class="QRadioButton" name="bothSelectRB">
@@ -1072,7 +1079,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>XRD Stash Position for XRF Scan</string>
+     <string>Goniometer position for XRF</string>
     </property>
    </widget>
    <widget class="QWidget" name="layoutWidget">
@@ -1123,6 +1130,45 @@
      </item>
     </layout>
    </widget>
+   <widget class="QLabel" name="label_32">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>731</y>
+      <width>161</width>
+      <height>30</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>XRF output file prefix :</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="browseButton_2">
+    <property name="geometry">
+     <rect>
+      <x>310</x>
+      <y>761</y>
+      <width>81</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Browse</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="outprefLE_2">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>760</y>
+      <width>261</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>C:\X123Data\Spectrum_</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -1130,7 +1176,7 @@
      <x>0</x>
      <y>0</y>
      <width>1140</width>
-     <height>25</height>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
