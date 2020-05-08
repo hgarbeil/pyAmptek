@@ -245,6 +245,8 @@ class gridscan(QtWidgets.QMainWindow):
         outpref = self.ui.outprefLE.text()
         outfile = outpref + '_XRD_##_####.sfrm'
         # check if outfile exists
+        # start the bclient thread which does the acquisition
+        self.bclient.set_scan_type (2)
         self.bclient.set_scan_params (dist,theta, omega, phi, outfile)
         self.bclient.start()
     #    noresponse=self.bclient.execute_scan(dist,theta, omega, phi, outfile)
@@ -398,11 +400,7 @@ class gridscan(QtWidgets.QMainWindow):
 
     # the start scan for XRF looks to see which tab widget is active, if in grid mode, reads params and starts the XRF Scan
     # if in
-    def start_scan_junk (self) :
-        self.qth = QtCore.QThread()
-        self.qth.started.connect (self.start_scan_th)
-        self.moveToThread (self.qth)
-        self.qth.start()
+
 
     def start_scan (self) :
         # we need a step here to drive to the Phi position to get the XRD out of the way,
@@ -414,39 +412,46 @@ class gridscan(QtWidgets.QMainWindow):
         omega = float(self.ui.omegaLE.text())
         phi = float(self.ui.phiLE.text())
         runnum = int(self.ui.runnumLE.text())
-        self.set_image_params(runnum)
+
         outpref = self.ui.outprefLE.text()
         outfile = outpref + '_XRD_##_####.sfrm'
-
+        # send the scan params to the bruker client
+        self.bclient.set_scan_params(dist, theta, omega, phi, outfile)
+        self.set_image_params(runnum)
+        # get the scan positions
         scanpos = []
         self.read_scan_locations(scanpos)
-        npos = len(scanpos)
-        nore=0
-        for i in range(npos):
-            if nore == 0:
-                xval = scanpos[i][0]
-                yval = scanpos[i][1]
-                zval = scanpos[i][2]
-
-                self.ca.move_motor(0, xval)
-                self.ca.move_motor(1, yval)
-                self.ca.move_motor(2, zval)
-
-                done = 0
-                while done == 0:
-                    time.sleep(0.5)
-                    x = self.ca.get_position(0)
-                    y = self.ca.get_position(1)
-                    z = self.ca.get_position(2)
-                    if abs(x-xval) <0.001 and abs(y-yval)<0.001 and abs(z-zval)<0.001: done = 1
-                runnum = runnum+1
-                self.set_image_params(runnum)
-                self.bclient.set_scan_params(dist, theta, omega, phi, outfile)
-                nore=self.bclient.execute_scan(dist, theta, omega, phi, outfile)
-                #self.bclient.start()
-                print "--- position", i, "finished"
-            else:
-                print "Connection with BIS has been lost"
+        self.bclient.set_scan_positions(scanpos)
+        self.bclient.set_scan_type (self.scantype)
+        self.blient.set_motor_control (self.ca)
+        self.bclient.start()
+        # npos = len(scanpos)
+        # nore=0
+        # for i in range(npos):
+        #     if nore == 0:
+        #         xval = scanpos[i][0]
+        #         yval = scanpos[i][1]
+        #         zval = scanpos[i][2]
+        #
+        #         self.ca.move_motor(0, xval)
+        #         self.ca.move_motor(1, yval)
+        #         self.ca.move_motor(2, zval)
+        #
+        #         done = 0
+        #         while done == 0:
+        #             time.sleep(0.5)
+        #             x = self.ca.get_position(0)
+        #             y = self.ca.get_position(1)
+        #             z = self.ca.get_position(2)
+        #             if abs(x-xval) <0.001 and abs(y-yval)<0.001 and abs(z-zval)<0.001: done = 1
+        #         runnum = runnum+1
+        #         self.set_image_params(runnum)
+        #         self.bclient.set_scan_params(dist, theta, omega, phi, outfile)
+        #         nore=self.bclient.execute_scan(dist, theta, omega, phi, outfile)
+        #         #self.bclient.start()
+        #         print "--- position", i, "finished"
+        #     else:
+        #         print "Connection with BIS has been lost"
 
 
       else:

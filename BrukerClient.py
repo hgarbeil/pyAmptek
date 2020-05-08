@@ -2,6 +2,8 @@ import socket
 import sys
 import time
 from PyQt5 import QtCore, QtGui
+from epics import caget, cainfo, caput
+from MyCAEpics import *
 
 
 class BrukerClient (QtCore.QThread) :
@@ -41,7 +43,9 @@ class BrukerClient (QtCore.QThread) :
             self.scantime = 5 #secs per image
             self.width = 1 #angular width for each image
             self.runnumber = 1
-
+            self.scantype = 2 # 2 :single XRD collect mode 1 : xyz scan mode
+            self.ca = 0
+            self.scan_pos_list =[] # empty scan position list
             self.command_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.command_sock.settimeout(30.)
             #   command_sock.setblocking(0)
@@ -160,6 +164,15 @@ class BrukerClient (QtCore.QThread) :
         self.scan_theta = theta
         self.scan_phi = phi
         self.scan_outfile = outfile
+
+    def set_scan_positions (self, mylist):
+        self.scan_pos_list = mylist
+
+    def set_scan_type (self, st) :
+        self.scantype = st
+
+    def set_motor_control (self, myca):
+        self.ca = myca
 
     def execute_scan(self, dist, theta, omega, phi, outfile):
         #self.bcrun = true
@@ -316,7 +329,37 @@ class BrukerClient (QtCore.QThread) :
 
     def run (self) :
         #dist, theta, omega, phi, outfile):
-        self.execute_scan (self.scan_dist, self.scan_theta, self.scan_omega, self.scan_phi, self.scan_outfile)
+        # scantype set in gridscan and passed here
+        if self.scantype == 2 :
+            self.execute_scan (self.scan_dist, self.scan_theta, self.scan_omega, self.scan_phi, self.scan_outfile)
+        else :
+            npos = len(self.scanpos)
+            nore = 0
+            for i in range(npos):
+                if nore == 0:
+                    xval = self.scanpos[i][0]
+                    yval = self.scanpos[i][1]
+                    zval = self.scanpos[i][2]
+
+                    self.ca.move_motor(0, xval)
+                    self.ca.move_motor(1, yval)
+                    self.ca.move_motor(2, zval)
+
+                    done = 0
+                    while done == 0:
+                        time.sleep(0.5)
+                        x = self.ca.get_position(0)
+                        y = self.ca.get_position(1)
+                        z = self.ca.get_position(2)
+                        if abs(x - xval) < 0.001 and abs(y - yval) < 0.001 and abs(z - zval) < 0.001: done = 1
+                    runnum = runnum + 1
+                    self.set_image_params(runnum)
+                    #self.bclient.set_scan_params(self.scan_dist, self.scan_theta, self.scan_omega, self.scan_phi, self.scan_outfile)
+                    nore = self.execute_scan(self.scan_dist, self.scan_theta, self.scan_omega, self.scan_phi, self.scan_outfile)
+                    # self.bclient.start()
+                    print "--- position", i, "finished"
+                else:
+                    print "Connection with BIS has been lost"
 
 
 
