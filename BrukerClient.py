@@ -13,6 +13,7 @@ class BrukerClient (QtCore.QThread) :
     serverip = '128.171.152.86'
     shutter_state = QtCore.pyqtSignal(int)
     newangles = QtCore.pyqtSignal ()
+    newpos = QtCore.pyqtSignal (int)
     abort = 0
 
 
@@ -201,6 +202,7 @@ class BrukerClient (QtCore.QThread) :
             while completed == 0 and noresponse <10 :
                 time.sleep(1.0)
                 data = self.status_sock.recv(1024)
+                print "in the thread .... "
                 #print data
                 if self.abort == 1 :
                     print "abort button pressed"
@@ -336,6 +338,7 @@ class BrukerClient (QtCore.QThread) :
             npos = len(self.scanpos)
             nore = 0
             for i in range(npos):
+                self.newpos.emit (i)
                 if nore == 0:
                     xval = self.scanpos[i][0]
                     yval = self.scanpos[i][1]

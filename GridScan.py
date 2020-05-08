@@ -142,6 +142,7 @@ class gridscan(QtWidgets.QMainWindow):
         # signal - slot from the BIS Client (BrukerClient)
         self.bclient.shutter_state.connect (self.set_shutter_button)
         self.bclient.newangles.connect (self.bis_update)
+        self.bclient.newpos.connect (self.bis_newpos)
 
         # custom scan - list widget based coordinates for xyz stage motion
         # user specifies each position to scan
@@ -224,6 +225,11 @@ class gridscan(QtWidgets.QMainWindow):
     def drive_bc_default (self) :
         self.bclient.reconnect()
         self.bclient.drive_to_default ()
+
+    # slot from the bis.newpos notifying about new xyz position
+    def bis_newpos (self, pnum) :
+        self.ui.coordLocationsWidget.item(pnum).setSelected(True)
+
 
     def set_image_params(self, runnum):
         nscans = int(self.ui.nscansRunLE.text())
