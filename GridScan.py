@@ -104,6 +104,7 @@ class gridscan(QtWidgets.QMainWindow):
         self.ca.update_position.connect (self.update_motors)
         self.ca.set_status.connect (self.set_status_label)
         self.ui.x_MoveButton.clicked.connect (self.move_x_motor)
+        self.ui.abortScanButton.clicked.connect (self.abort_scan)
         self.ui.y_MoveButton.clicked.connect(self.move_y_motor)
         self.ui.updateCenterButton.clicked.connect (self.set_center)
         self.ui.browseButton.clicked.connect (self.browse_prefix)
@@ -147,6 +148,7 @@ class gridscan(QtWidgets.QMainWindow):
         self.ui.add_current_button.clicked.connect (self.add_current_tolist)
         self.ui.restoreCoordsButton.clicked.connect (self.restore_coords)
         self.ui.delSelectedButton.clicked.connect (self.delete_selected)
+        self.ui.move_sel_button.clicked.connect (self.move_selected)
         self.ui.saveCoordsButton.clicked.connect (self.save_coords)
         self.ui.clearCoordsButton.clicked.connect (self.clear_coords)
 
@@ -173,7 +175,8 @@ class gridscan(QtWidgets.QMainWindow):
         #self.bclient.execute_scan(dist, theta, omega, phi)
         self.bclient.drive_to_specified (dist, theta, phi, omega)
         self.bclient.get_gonio_position()
-        self.bis_update()
+        self.bclient.newangles.emit()
+        #self.bis_update()
 
     def change_scantype_to_XRD (self):
         print "XRD scan selected"
@@ -241,7 +244,10 @@ class gridscan(QtWidgets.QMainWindow):
         self.set_image_params(runnum)
         outpref = self.ui.outprefLE.text()
         outfile = outpref + '_XRD_##_####.sfrm'
-        noresponse=self.bclient.execute_scan(dist,theta, omega, phi, outfile)
+        # check if outfile exists
+        self.bclient.set_scan_params (dist,theta, omega, phi, outfile)
+        self.bclient.start()
+    #    noresponse=self.bclient.execute_scan(dist,theta, omega, phi, outfile)
 
 
     def exceed_twotheta (self) :
@@ -367,6 +373,28 @@ class gridscan(QtWidgets.QMainWindow):
         #    myrow = self.ui.coordLocationsWidget.row(SelectedItem)
         self.ui.coordLocationsWidget.takeItem(myrow)
 
+    def move_selected (self) :
+        nitems = self.ui.coordLocationsWidget.model().rowCount()
+        print 'total items : ', nitems
+        mysel = self.ui.coordLocationsWidget.currentItem()
+        print mysel
+        curline = mysel.text()
+        vals = curline.split(' ')
+        xval = float (vals[0])
+        yval = float(vals[1])
+        zval = float(vals[2])
+        self.ca.move_motor(0,xval)
+        time.sleep (.5)
+        self.ca.move_motor(1, yval)
+        time.sleep(.5)
+        self.ca.move_motor(2, zval)
+        time.sleep(.5)
+        xval = caget("Dera:m1.VAL")
+        yval = caget("Dera:m2.VAL")
+        zval = caget("Dera:m3.VAL")
+        self.ui.x_customLE.setText ("%7.4f"%xval)
+        self.ui.y_customLE.setText("%7.4f"%yval)
+        self.ui.z_customLE.setText("%7.4f"%zval)
 
     # the start scan for XRF looks to see which tab widget is active, if in grid mode, reads params and starts the XRF Scan
     # if in
@@ -407,6 +435,7 @@ class gridscan(QtWidgets.QMainWindow):
                     if abs(x-xval) <0.001 and abs(y-yval)<0.001 and abs(z-zval)<0.001: done = 1
                 runnum = runnum+1
                 self.set_image_params(runnum)
+                self.bclient.set_scan_params(dist, theta, omega, phi, outfile)
                 nore=self.bclient.execute_scan(dist, theta, omega, phi, outfile)
                 print "--- position", i, "finished"
             else:
@@ -565,7 +594,8 @@ class gridscan(QtWidgets.QMainWindow):
         self.ui.curPhiLE.setText("%5.2f" % vals[3])
         self.ui.curOmegaLE.setText("%5.2f" % vals[2])
 
-
+    def abort_scan (self) :
+        self.bclient.set_abort(1)
 
     # called by bclient to update the shutter button
     def set_shutter_button (self, state) :

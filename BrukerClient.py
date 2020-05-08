@@ -11,6 +11,8 @@ class BrukerClient (QtCore.QThread) :
     serverip = '128.171.152.86'
     shutter_state = QtCore.pyqtSignal(int)
     newangles = QtCore.pyqtSignal ()
+    abort = 0
+
 
     def __init__(self):
         QtCore.QThread.__init__(self)
@@ -23,6 +25,15 @@ class BrukerClient (QtCore.QThread) :
             self.omega = 0
             self.phi = 0
             self.chi = 0
+            self.abort = 0
+
+            # scan_params are used in the thread for the execute_scan function
+            self.scan_dist = 0
+            self.scan_theta = 0
+            self.scan_omega = 0
+            self.scan_phi = 0
+            self.scan_outfile = ''
+
             self.bcrun = False
             self.bcstatus= True
             self.distance = 0
@@ -38,7 +49,7 @@ class BrukerClient (QtCore.QThread) :
             self.file_sock.settimeout(30.)
             #file_sock.setblocking(0)
             self.status_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            self.status_sock.settimeout(120.)
+            self.status_sock.settimeout(30.)
             #status_sock.setblocking(0)
             server_address = (BrukerClient.serverip, 49153)
             print >> sys.stderr, 'connecting to %s port %s'%server_address
@@ -52,7 +63,7 @@ class BrukerClient (QtCore.QThread) :
             self.status_sock.connect (server_address)
             #self.get_status()
             #time.sleep (20)
-            self.start()
+            # self.start()
 
             self.bcrun = False
         except socket.error, msg :
@@ -66,14 +77,13 @@ class BrukerClient (QtCore.QThread) :
             self.command_sock.close()
             self.file_sock.close()
             self.status_sock.close()
-            time.sleep(1.0)
-
+            time.sleep(0.5)
             self.command_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.command_sock.settimeout(30.)
             self.file_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.file_sock.settimeout(30.)
             self.status_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            self.status_sock.settimeout(120.)
+            self.status_sock.settimeout(30.)
 
             server_address = (self.serverip, 49153)
             print >> sys.stderr, 'connecting to %s port %s'%server_address
@@ -144,7 +154,15 @@ class BrukerClient (QtCore.QThread) :
         self.scantime = scansec
         self.width = w
 
+    def set_scan_params(self, dist, theta, omega, phi, outfile):
+        self.scan_dist = dist
+        self.scan_omega = omega
+        self.scan_theta = theta
+        self.scan_phi = phi
+        self.scan_outfile = outfile
+
     def execute_scan(self, dist, theta, omega, phi, outfile):
+        #self.bcrun = true
         self.drive_to_specified(dist, theta, phi, omega)
         fname_template=outfile
         rownumber = 1
@@ -167,16 +185,23 @@ class BrukerClient (QtCore.QThread) :
             time.sleep(1)
             completed = 0
             noresponse=0
-            while completed == 0 and noresponse <10:
+            while completed == 0 and noresponse <10 :
                 time.sleep(1.0)
                 data = self.status_sock.recv(1024)
                 #print data
+                if self.abort == 1 :
+                    print "abort button pressed"
+                    message = "[HardAbort]"
+                    self.command_sock.send(message)
+                    self.abort=0
+                    completed = 1
+
                 if not data:
-                    print "--no response", noresponse
+                    print "--no response from BIS", noresponse
                     noresponse = noresponse + 1
-                    time.sleep(2.0)
-                    if noresponse >2:
-                        self.reconnect()
+                    #time.sleep(2.0)
+                    #if noresponse >2:
+                    self.reconnect()
                 else:
                     noresponse = 0
                     if "[SCAN_YES /RUNNUMBER=" in data:
@@ -192,6 +217,7 @@ class BrukerClient (QtCore.QThread) :
                         self.newangles.emit()
         except socket.error, msg:
             print "Scans error : %s" % msg
+
         return noresponse
     # open the shutter
     def open_shutter (self) :
@@ -266,6 +292,9 @@ class BrukerClient (QtCore.QThread) :
                     self.newangles.emit()
                     completed = 1
 
+    def set_abort(self, value):
+        self.abort=value
+
     def set_angles (self, angles):
             self.distance = angles[1]
             self.twotheta = angles[2]
@@ -286,11 +315,8 @@ class BrukerClient (QtCore.QThread) :
         else: return [-1,0,0,0,0,0] # return -1 if text does not contain "[ANGLESTATUS"
 
     def run (self) :
-        self.bcrun = False # PD changed to false om 5/5/20
-        while (self.bcrun) :
-            self.newangles.emit()
-            self.sleep (2)
-
+        #dist, theta, omega, phi, outfile):
+        self.execute_scan (self.scan_dist, self.scan_theta, self.scan_omega, self.scan_phi, self.scan_outfile)
 
 
 

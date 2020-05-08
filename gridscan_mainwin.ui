@@ -69,7 +69,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>D:\frames\guest\remote\Sample</string>
+     <string>D:\frames\guest\remote\SampleAA</string>
     </property>
    </widget>
    <widget class="QGroupBox" name="groupBox_3">
@@ -243,7 +243,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="tab">
      <attribute name="title">
@@ -668,7 +668,7 @@
        </rect>
       </property>
      </widget>
-     <widget class="QPushButton" name="move_to_sel_button">
+     <widget class="QPushButton" name="move_sel_button">
       <property name="geometry">
        <rect>
         <x>30</x>
