@@ -136,9 +136,9 @@ class BrukerClient (QtCore.QThread) :
                 self.command_sock.send(message)
                 complete = 0
                 while complete == 0 :
-                    time.sleep(0.5)
+                    time.sleep(1.)
                     data = self.status_sock.recv (1024)
-                    # print data
+                    print data
                     if ("[ANGLESTATUS" in data):
                         angles = self.parse_anglestatus(data)
                         self.set_angles(angles)

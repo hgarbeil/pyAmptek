@@ -398,6 +398,12 @@ class gridscan(QtWidgets.QMainWindow):
 
     # the start scan for XRF looks to see which tab widget is active, if in grid mode, reads params and starts the XRF Scan
     # if in
+    def start_scan_junk (self) :
+        self.qth = QtCore.QThread()
+        self.qth.started.connect (self.start_scan_th)
+        self.moveToThread (self.qth)
+        self.qth.start()
+
     def start_scan (self) :
         # we need a step here to drive to the Phi position to get the XRD out of the way,
       if self.scantype == 1:
@@ -437,6 +443,7 @@ class gridscan(QtWidgets.QMainWindow):
                 self.set_image_params(runnum)
                 self.bclient.set_scan_params(dist, theta, omega, phi, outfile)
                 nore=self.bclient.execute_scan(dist, theta, omega, phi, outfile)
+                #self.bclient.start()
                 print "--- position", i, "finished"
             else:
                 print "Connection with BIS has been lost"
