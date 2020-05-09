@@ -102,7 +102,7 @@ class gridscan(QtWidgets.QMainWindow):
         #self.connect (self.ca, self.ca.update_position, self,
         #              QtCore.pyqtSlot(self.updateMotors))
         self.ca.update_position.connect (self.update_motors)
-        self.ca.set_status.connect (self.set_status_label)
+        self.ca.set_status.connect (self.set_status_label, 1)
         self.ui.x_MoveButton.clicked.connect (self.move_x_motor)
         self.ui.abortScanButton.clicked.connect (self.abort_scan)
         self.ui.y_MoveButton.clicked.connect(self.move_y_motor)
@@ -143,6 +143,8 @@ class gridscan(QtWidgets.QMainWindow):
         self.bclient.shutter_state.connect (self.set_shutter_button)
         self.bclient.newangles.connect (self.bis_update)
         self.bclient.newpos.connect (self.bis_newpos)
+        self.bclient.clearpos.connect (self.bis_clearpos)
+        self.bclient.runstringSig.connect (self.bis_status)
 
         # custom scan - list widget based coordinates for xyz stage motion
         # user specifies each position to scan
@@ -228,8 +230,17 @@ class gridscan(QtWidgets.QMainWindow):
 
     # slot from the bis.newpos notifying about new xyz position
     def bis_newpos (self, pnum) :
-        self.ui.coordLocationsWidget.item(pnum).setSelected(True)
+        pnum = pnum
+        print "Now on run number ", pnum
+        self.ui.coordLocationsWidget.item(pnum).setBackground(QtGui.QColor(255,255,0))
 
+    def bis_clearpos (self):
+        nrows = self.ui.coordLocationsWidget.count
+        for i in range (nrows) :
+            self.ui.coordLocationsWidget.item(pnum).setBackground(QtGui.QColor(255, 255, 255))
+
+    def bis_status (self, statstr):
+        self.set_status_label (statstr)
 
     def set_image_params(self, runnum):
         nscans = int(self.ui.nscansRunLE.text())
@@ -237,6 +248,8 @@ class gridscan(QtWidgets.QMainWindow):
         width = float(self.ui.widthLE.text())
         #runnum = int(self.ui.runnumLE.text())
         self.bclient.set_image_params(runnum, nscans, secs, width)
+
+
 
     # collect with the XRD detector, first driving to the specified location
     def collect_XRD (self):
@@ -429,7 +442,7 @@ class gridscan(QtWidgets.QMainWindow):
         self.read_scan_locations(scanpos)
         self.bclient.set_scan_positions(scanpos)
         self.bclient.set_scan_type (self.scantype)
-        self.blient.set_motor_control (self.ca)
+        self.bclient.set_motor_control (self.ca)
         self.bclient.start()
         # npos = len(scanpos)
         # nore=0

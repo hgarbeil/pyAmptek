@@ -14,6 +14,8 @@ class BrukerClient (QtCore.QThread) :
     shutter_state = QtCore.pyqtSignal(int)
     newangles = QtCore.pyqtSignal ()
     newpos = QtCore.pyqtSignal (int)
+    clearpos = QtCore.pyqtSignal()
+    runstringSig = QtCore.pyqtSignal (str)
     abort = 0
 
 
@@ -45,7 +47,7 @@ class BrukerClient (QtCore.QThread) :
             self.width = 1 #angular width for each image
             self.runnumber = 1
             self.scantype = 2 # 2 :single XRD collect mode 1 : xyz scan mode
-            self.ca = 0
+            #self.ca = 0
             self.scan_pos_list =[] # empty scan position list
             self.command_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.command_sock.settimeout(30.)
@@ -159,6 +161,9 @@ class BrukerClient (QtCore.QThread) :
         self.scantime = scansec
         self.width = w
 
+    def set_image_runnum (self, runnum):
+        self.runnumber = runnum
+
     def set_scan_params(self, dist, theta, omega, phi, outfile):
         self.scan_dist = dist
         self.scan_omega = omega
@@ -202,7 +207,6 @@ class BrukerClient (QtCore.QThread) :
             while completed == 0 and noresponse <10 :
                 time.sleep(1.0)
                 data = self.status_sock.recv(1024)
-                print "in the thread .... "
                 #print data
                 if self.abort == 1 :
                     print "abort button pressed"
@@ -222,6 +226,8 @@ class BrukerClient (QtCore.QThread) :
                     if "[SCAN_YES /RUNNUMBER=" in data:
                         num = data.find("/RUNNUMBER")
                         print data[num:num+30]
+                        s = data[num:num+30]
+                        self.runstringSig.emit(s)
                     if "[SCAN(S)DONE]" in data:
                         print "------------- scan is complete"
                         completed=1
@@ -331,18 +337,18 @@ class BrukerClient (QtCore.QThread) :
 
     def run (self) :
         #dist, theta, omega, phi, outfile):
-        # scantype set in gridscan and passed here
+        # scantype set in gridscan and passed here - 1 is xyz scan, while 2 is single collect, I know that is kind of confusing.
         if self.scantype == 2 :
             self.execute_scan (self.scan_dist, self.scan_theta, self.scan_omega, self.scan_phi, self.scan_outfile)
         else :
-            npos = len(self.scanpos)
+            npos = len(self.scan_pos_list)
             nore = 0
             for i in range(npos):
                 self.newpos.emit (i)
                 if nore == 0:
-                    xval = self.scanpos[i][0]
-                    yval = self.scanpos[i][1]
-                    zval = self.scanpos[i][2]
+                    xval = self.scan_pos_list[i][0]
+                    yval = self.scan_pos_list[i][1]
+                    zval = self.scan_pos_list[i][2]
 
                     self.ca.move_motor(0, xval)
                     self.ca.move_motor(1, yval)
@@ -355,8 +361,8 @@ class BrukerClient (QtCore.QThread) :
                         y = self.ca.get_position(1)
                         z = self.ca.get_position(2)
                         if abs(x - xval) < 0.001 and abs(y - yval) < 0.001 and abs(z - zval) < 0.001: done = 1
-                    runnum = runnum + 1
-                    self.set_image_params(runnum)
+                    self.runnumber = self.runnumber + 1
+                    self.set_image_runnum(self.runnumber)
                     #self.bclient.set_scan_params(self.scan_dist, self.scan_theta, self.scan_omega, self.scan_phi, self.scan_outfile)
                     nore = self.execute_scan(self.scan_dist, self.scan_theta, self.scan_omega, self.scan_phi, self.scan_outfile)
                     # self.bclient.start()
@@ -364,7 +370,7 @@ class BrukerClient (QtCore.QThread) :
                 else:
                     print "Connection with BIS has been lost"
 
-
+            self.clearpos.emit()
 
 #bc = BrukerClient()
 #bc.open_shutter()
