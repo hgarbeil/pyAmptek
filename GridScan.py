@@ -235,9 +235,9 @@ class gridscan(QtWidgets.QMainWindow):
         self.ui.coordLocationsWidget.item(pnum).setBackground(QtGui.QColor(255,255,0))
 
     def bis_clearpos (self):
-        nrows = self.ui.coordLocationsWidget.count
-        for i in range (nrows) :
-            self.ui.coordLocationsWidget.item(pnum).setBackground(QtGui.QColor(255, 255, 255))
+        nitems = self.ui.coordLocationsWidget.model().rowCount()
+        for i in range (nitems) :
+            self.ui.coordLocationsWidget.item(i).setBackground(QtGui.QColor(255, 255, 255))
 
     def bis_status (self, statstr):
         self.set_status_label (statstr)
