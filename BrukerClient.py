@@ -21,32 +21,32 @@ class BrukerClient (QtCore.QThread) :
 
     def __init__(self):
         QtCore.QThread.__init__(self)
+        self.chi = 0
+        self.omega = 0
+        self.phi = 0
+        self.chi = 0
+        self.abort = 0
+        # scan_params are used in the thread for the execute_scan function
+        self.scan_dist = 0
+        self.scan_theta = 0
+        self.scan_omega = 0
+        self.scan_phi = 0
+        self.scan_outfile = ''
+        self.bcrun = False
+        self.bcstatus = True
+        self.distance = 0
+        self.scansinrun = 5  # scans per run
+        self.scantime = 5  # secs per image
+        self.width = 1  # angular width for each image
+        self.runnumber = 1
+        self.scantype = 2  # 2 :single XRD collect mode 1 : xyz scan mode
+        self.retries = 0
 
 
     def connect (self) :
         try :
             self.shutter_status = 0
-            self.chi = 0
-            self.omega = 0
-            self.phi = 0
-            self.chi = 0
-            self.abort = 0
 
-            # scan_params are used in the thread for the execute_scan function
-            self.scan_dist = 0
-            self.scan_theta = 0
-            self.scan_omega = 0
-            self.scan_phi = 0
-            self.scan_outfile = ''
-
-            self.bcrun = False
-            self.bcstatus= True
-            self.distance = 0
-            self.scansinrun = 5 #scans per run
-            self.scantime = 5 #secs per image
-            self.width = 1 #angular width for each image
-            self.runnumber = 1
-            self.scantype = 2 # 2 :single XRD collect mode 1 : xyz scan mode
             #self.ca = 0
             self.scan_pos_list =[] # empty scan position list
             self.command_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -111,16 +111,24 @@ class BrukerClient (QtCore.QThread) :
 
 
 
-    def get_status (self):
-        try :
-            while (1):
-                data = self.status_sock.recv(BrukerClient.BSIZE)
-                print data
-        except socket.error, msg:
-            print "Shutter status error : %s" % msg
+    # def get_status (self):
+    #     try :
+    #         while (1 and self.retries<10):
+    #             data = self.status_sock.recv(BrukerClient.BSIZE)
+    #             print data
+    #     except socket.error, msg:
+    #         print "Shutter status error : %s" % msg
+    #         print "Trying reconnect"
+    #         self.retries = self.retries + 1
+    #         self.reconnect()
+    #         self.get_status()
 
     # drive to position of 200mm, 2theta= -30 omega=0 and phi=180
     def drive_to_default (self) :
+        if (self.retries >10) :
+            print "cannot drive : giving up "
+            self.retries = 0
+            return
         try :
             for i in range (1):
                 time.sleep(0.5)
@@ -129,10 +137,20 @@ class BrukerClient (QtCore.QThread) :
 
         except socket.error, msg:
             print "Drive error : %s" % msg
+            print "Trying reconnect "
+            self.retries = self.retries+1
+            self.reconnect()
+            self.drive_to_default()
         else:
             print "Status socket readout complete"
+            self.retries = 0
 
     def drive_to_specified (self, dist, theta, phi, omega) :
+        if (self.retries > 10):
+            print "cannot drive : giving up "
+            self.retries = 0
+            return
+
         self.get_gonio_position
         if abs(self.twotheta-theta) <0.05 and  abs(self.omega-omega)<0.05 and abs(self.distance-dist)<0.05 :
             print "goniometer is aleady at target position"
@@ -153,7 +171,15 @@ class BrukerClient (QtCore.QThread) :
                         complete = 1
             except socket.error, msg :
                 print "Drive error : %s"%msg
-            else: print "--- Motion completed without exception"
+                print "Trying reconnect "
+                self.retries = self.retries+1
+                self.reconnect()
+                self.drive_to_specified (dist, theta, phi, omega)
+
+            else:
+                print "--- Motion completed without exception"
+                self.retries = 0
+
 
     def set_image_params (self, runnum, nscans, scansec, w) :
         self.runnumber = runnum
@@ -262,6 +288,9 @@ class BrukerClient (QtCore.QThread) :
                 #print data
         except socket.error, msg :
             print "Open shutter comm error : %s"%msg
+            print "Trying reconnect"
+            self.reconnect()
+            self.open_shutter()
 
     # close the shutter
     def close_shutter (self) :
@@ -279,12 +308,12 @@ class BrukerClient (QtCore.QThread) :
                     loc = data.find ("[SHUTTER")
                     newstr = data[loc:]
                     print newstr
-                
-                
-
-                #print data
+                 #print data
         except socket.error, msg :
             print "Close shutter comm error : %s"%msg
+            print "Trying reconnect"
+            self.reconnect()
+            self.close_shutter()
 
     # called by other classes to get BIS values
     def get_values (self, vals) :
@@ -306,6 +335,8 @@ class BrukerClient (QtCore.QThread) :
                 data = self.status_sock.recv(1024)
             except socket.error, msg:
                 print  "socket error"
+                self.reconnect()
+                self.get_gonio_position()
             else :
                 if ("[ANGLESTATUS" in data):
                     angles=self.parse_anglestatus(data)
