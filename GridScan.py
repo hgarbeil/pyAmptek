@@ -109,6 +109,18 @@ class gridscan(QtWidgets.QMainWindow):
         self.ui.updateCenterButton.clicked.connect (self.set_center)
         self.ui.browseButton.clicked.connect (self.browse_prefix)
 
+        self.ui.pushButtonStep200.clicked.connect(self.changeXYZstep200)
+        self.ui.pushButtonStep100.clicked.connect(self.changeXYZstep100)
+        self.ui.pushButtonStep50.clicked.connect(self.changeXYZstep50)
+        self.ui.pushButtonStep10.clicked.connect(self.changeXYZstep10)
+
+        self.ui.pushButtonXYZJogUp.clicked.connect(self.changeXYZUp)
+        self.ui.pushButtonXYZJogDown.clicked.connect(self.changeXYZDown)
+        self.ui.pushButtonXYZJogLeft.clicked.connect(self.changeXYZLeft)
+        self.ui.pushButtonXYZJogRight.clicked.connect(self.changeXYZRight)
+        self.ui.pushButtonXYZFocusUp.clicked.connect(self.changeXYZFocusUp)
+        self.ui.pushButtonXYZFocusDown.clicked.connect(self.changeXYZFocusDown)
+
         self.ui.xrdSelectRB.clicked.connect(self.change_scantype_to_XRD)
         self.ui.xrfSelectRB.clicked.connect(self.change_scantype_to_XRF)
         self.ui.bothSelectRB.clicked.connect(self.change_scantype_to_both)
@@ -180,6 +192,48 @@ class gridscan(QtWidgets.QMainWindow):
         self.bclient.get_gonio_position()
         self.bclient.newangles.emit()
         #self.bis_update()
+
+    def changeXYZUp (self):
+        self.bclient.set_motor_control (self.ca)
+        XyzStep= float(self.ui.lineEditXYZStep.text())
+        self.bclient.move_XYZ_motor_by_step(2,XyzStep)
+
+    def changeXYZDown (self):
+        self.bclient.set_motor_control (self.ca)
+        XyzStep= float(self.ui.lineEditXYZStep.text())
+        self.bclient.move_XYZ_motor_by_step(2,-XyzStep)
+
+    def changeXYZLeft (self):
+        self.bclient.set_motor_control(self.ca)
+        XyzStep= float(self.ui.lineEditXYZStep.text())
+        self.bclient.move_XYZ_motor_by_step(0,-XyzStep)
+
+    def changeXYZRight (self):
+        self.bclient.set_motor_control(self.ca)
+        XyzStep= float(self.ui.lineEditXYZStep.text())
+        self.bclient.move_XYZ_motor_by_step(0,XyzStep)
+
+    def changeXYZFocusUp (self):
+        self.bclient.set_motor_control(self.ca)
+        XyzStep= float(self.ui.lineEditXYZStep.text())
+        self.bclient.move_XYZ_motor_by_step(1,XyzStep)
+
+    def changeXYZFocusDown (self):
+        self.bclient.set_motor_control(self.ca)
+        XyzStep= float(self.ui.lineEditXYZStep.text())
+        self.bclient.move_XYZ_motor_by_step(1,-XyzStep)
+
+    def changeXYZstep200 (self):
+        self.ui.lineEditXYZStep.setText("%5.3f" % 0.200)
+
+    def changeXYZstep100 (self):
+        self.ui.lineEditXYZStep.setText("%5.3f" % 0.100)
+
+    def changeXYZstep50 (self):
+        self.ui.lineEditXYZStep.setText("%5.3f" % 0.050)
+
+    def changeXYZstep10 (self):
+        self.ui.lineEditXYZStep.setText("%5.3f" % 0.010)
 
     def change_scantype_to_XRD (self):
         print "XRD scan selected"
@@ -637,7 +691,6 @@ class gridscan(QtWidgets.QMainWindow):
         if state == 1 :
             self.ui.shutter_status_button.setText ("Shutter Open")
             self.ui.shutter_status_button.setStyleSheet("background-color: yellow; color:red")
-
 
 
     def closeup (self) :

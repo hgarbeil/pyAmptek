@@ -335,6 +335,11 @@ class BrukerClient (QtCore.QThread) :
             return [0,float(eqsplit[2][0:eqsplit[2].find(']')]),float(subangles[0]),float(subangles[1]),float(subangles[2]),float(subangles[3])]
         else: return [-1,0,0,0,0,0] # return -1 if text does not contain "[ANGLESTATUS"
 
+    def move_XYZ_motor_by_step (self, mot, step):
+        cur_pos=self.ca.get_position(mot)
+        new_pos=cur_pos+step
+        self.ca.move_motor(mot, new_pos)
+
     def run (self) :
         #dist, theta, omega, phi, outfile):
         # scantype set in gridscan and passed here - 1 is xyz scan, while 2 is single collect, I know that is kind of confusing.
