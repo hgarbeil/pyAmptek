@@ -152,6 +152,7 @@ class gridscan(QtWidgets.QMainWindow):
         # there is also a drive button but not sure what that is driving to?
 
         # signal - slot from the BIS Client (BrukerClient)
+        self.bclient.reconectButton.clicked.connect(self.bis_reconnect)
         self.bclient.shutter_state.connect (self.set_shutter_button)
         self.bclient.newangles.connect (self.bis_update)
         self.bclient.newpos.connect (self.bis_newpos)
@@ -276,6 +277,9 @@ class gridscan(QtWidgets.QMainWindow):
         self.bclient.get_gonio_position()
         self.bis_update()
 
+    # button event to force a reconnect
+    def bis_reconnect(self):
+        self.bclient.reconnect()
 
     # this is now used to reconnect to status socket and listen
     def drive_bc_default (self) :

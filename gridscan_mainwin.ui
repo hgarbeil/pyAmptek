@@ -893,7 +893,7 @@
      <property name="geometry">
       <rect>
        <x>280</x>
-       <y>30</y>
+       <y>80</y>
        <width>121</width>
        <height>51</height>
       </rect>
@@ -1110,7 +1110,7 @@
      <property name="geometry">
       <rect>
        <x>280</x>
-       <y>90</y>
+       <y>140</y>
        <width>124</width>
        <height>208</height>
       </rect>
@@ -1152,6 +1152,19 @@
        </widget>
       </item>
      </layout>
+    </widget>
+    <widget class="QPushButton" name="reconnectButton">
+     <property name="geometry">
+      <rect>
+       <x>280</x>
+       <y>20</y>
+       <width>121</width>
+       <height>51</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Reconnect</string>
+     </property>
     </widget>
    </widget>
    <widget class="QGroupBox" name="groupBox_4">

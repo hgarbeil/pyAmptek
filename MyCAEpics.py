@@ -122,10 +122,10 @@ class MyCAEpics (QtCore.QThread):
         # if working from listflag
         if (self.gridFlag == False) :
             self.acquire_flag = True;
-            xval = caget('Dera:m3.VAL')
+            xval = caget('Dera:m1.VAL')
             count = 0
             yval = caget('Dera:m2.VAL')
-            zval = caget('Dera:m1.VAL')
+            zval = caget('Dera:m3.VAL')
             ltime = localtime()
             timestring = "%4d%02d%02d%02d%02d" % (ltime.tm_year, ltime.tm_mon, ltime.tm_mday,
                                                   ltime.tm_hour, ltime.tm_min)
@@ -160,7 +160,7 @@ class MyCAEpics (QtCore.QThread):
 
         #if a gridscan or single scan
         if (self.single_take == False) :
-            xval = caget ('Dera:m3.VAL')
+            xval = caget ('Dera:m1.VAL')
             count = 0
             yval = caget ('Dera:m2.VAL')
             ltime = localtime()
