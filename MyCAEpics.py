@@ -116,7 +116,9 @@ class MyCAEpics (QtCore.QThread):
 
 
     def run (self) :
+        print "Opening the shutter"
         self.bclient.open_shutter()
+        print "Finished opening the shutter"
         self.abort_flag = False
 
         # if working from listflag
@@ -134,11 +136,17 @@ class MyCAEpics (QtCore.QThread):
             for i in range (npos) :
                 xval = self.scanpos_list[i][0]
                 yval = self.scanpos_list[i][1]
+                zval = self.scanpos_list[i][2]
+
                 self.move_motor(1,yval)
                 self.update_position.emit(1, yval)
-                QtCore.QThread.sleep(2)
+
                 self.move_motor(0,xval)
                 self.update_position.emit(0, xval)
+
+                self.move_motor(2, zval)
+                self.update_position.emit(2, zval)
+
                 if (self.abort_flag== True) :
                     break
                 outstr = '%d\t%f\t%f\t%f\r\n' % (i, xval, yval, zval)
@@ -172,6 +180,7 @@ class MyCAEpics (QtCore.QThread):
             #    self.mytimer.set_expos_time (self.expos_secs)
             #    self.mytimer.start()
         else :
+            posfile = open("%s_position.txt" % (self.outpref), 'w')
             self.y_nsteps = 1
             self.x_nsteps = 1
         for i in range (self.y_nsteps) :

@@ -152,7 +152,7 @@ class gridscan(QtWidgets.QMainWindow):
         # there is also a drive button but not sure what that is driving to?
 
         # signal - slot from the BIS Client (BrukerClient)
-        self.bclient.reconectButton.clicked.connect(self.bis_reconnect)
+        self.ui.reconnectButton.clicked.connect(self.bis_reconnect)
         self.bclient.shutter_state.connect (self.set_shutter_button)
         self.bclient.newangles.connect (self.bis_update)
         self.bclient.newpos.connect (self.bis_newpos)
@@ -171,7 +171,7 @@ class gridscan(QtWidgets.QMainWindow):
         self.mytimer = QtCore.QTimer ()
         self.mytimer.timeout.connect (self.update_plot)
         self.mytimer.start(1000)
-        #self.fulltime = 20
+        self.fulltime = 20
 
         # close the application
         self.ui.exitButton.clicked.connect(self.closeup)
@@ -386,9 +386,9 @@ class gridscan(QtWidgets.QMainWindow):
         if (mot_num==1) :
             self.ui.y_CurLocLE.setText (s)
             self.ui.y_customLE.setText(s)
-        if (mot_num==2) :
-            self.ui.z_CurLocLE.setText (s)
-            self.ui.z_customLE.setText(s)
+        #if (mot_num==2) :
+        #    self.ui.z_CurLocLE.setText (s)
+        #    self.ui.z_customLE.setText(s)
 
 
     def move_x_motor (self) :
@@ -550,7 +550,7 @@ class gridscan(QtWidgets.QMainWindow):
             acqStr = "%4d"%(acquisition_time)
             #expos_secs = int (self.ui.instExposLE.text())
             self.ui.acquisitionTimeLE.setText (acqStr)
-            outprefix = self.ui.outprefLE.text()
+            outprefix = self.ui.outprefLE_2.text()
             self.ca.set_acquisition_params (outprefix, acquisition_time)
             #self.ca.set_expos_timer (expos_secs)
             self.curAcqSecPBar.setValue(0)
@@ -564,7 +564,7 @@ class gridscan(QtWidgets.QMainWindow):
             acqStr = "%4d" % (acquisition_time)
             # expos_secs = int (self.ui.instExposLE.text())
             self.ui.acquisitionTimeLE.setText(acqStr)
-            outprefix = self.ui.outprefLE.text()
+            outprefix = self.ui.outprefLE_2.text()
             self.ca.set_acquisition_params(outprefix, acquisition_time)
             # self.ca.set_expos_timer (expos_secs)
             self.curAcqSecPBar.setValue(0)
@@ -641,6 +641,8 @@ class gridscan(QtWidgets.QMainWindow):
     def single_take (self) :
         acquisition_time = int(self.ui.acquisitionTimeLE.text())
         self.ca.set_acquisition_time(acquisition_time)
+        outprefix = self.ui.outprefLE_2.text()
+        self.ca.set_acquisition_params(outprefix, acquisition_time)
         self.curAcqSecPBar.setValue(0)
         self.curAcqSecPBar.setRange(0, acquisition_time)
         self.fulltime = acquisition_time

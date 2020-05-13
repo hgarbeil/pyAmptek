@@ -274,16 +274,17 @@ class BrukerClient (QtCore.QThread) :
             self.command_sock.send(message)
             time.sleep(1)
             self.shutter_state.emit(1)
-
-            while (1) :
+            done=0
+            while done == 0 :
                 data = self.status_sock.recv (BrukerClient.BSIZE)
                 print data
-                if "[SHUTTERSTATUS" in data :
+                if "[SHUTTERSTATUS /STATUS=1" in data :
                     print "SHUTTER status string : "
                     loc = data.find ("[SHUTTER")
                     newstr = data[loc:]
-                    print newstr
-            
+                    print data
+                    done = 1
+
 
                 #print data
         except socket.error, msg :
@@ -293,27 +294,30 @@ class BrukerClient (QtCore.QThread) :
             self.open_shutter()
 
     # close the shutter
-    def close_shutter (self) :
+    def close_shutter(self):
         message = "[SHUTTER /STATUS=0]\n"
-        try :
+        try:
             print "sending message to bis"
             self.command_sock.send(message)
             time.sleep(1)
             self.shutter_state.emit(0)
-            while (1) :
-                data = self.status_sock.recv (BrukerClient.BSIZE)
+            done = 0
+            while done == 0:
+                data = self.status_sock.recv(BrukerClient.BSIZE)
                 print data
-                if "[SHUTTERSTATUS" in data :
-                    print "found message"
-                    loc = data.find ("[SHUTTER")
+                if "[SHUTTERSTATUS /STATUS=0" in data:
+                    print "SHUTTER status string : "
+                    loc = data.find("[SHUTTER")
                     newstr = data[loc:]
-                    print newstr
-                 #print data
-        except socket.error, msg :
-            print "Close shutter comm error : %s"%msg
+                    print data
+                    done = 1
+
+                # print data
+        except socket.error, msg:
+            print "Close shutter comm error : %s" % msg
             print "Trying reconnect"
             self.reconnect()
-            self.close_shutter()
+            self.open_shutter()
 
     # called by other classes to get BIS values
     def get_values (self, vals) :
