@@ -121,6 +121,7 @@ class MyCAEpics (QtCore.QThread):
         print "Finished opening the shutter"
         self.abort_flag = False
 
+        # XRF LIST SCAN - with positions in the scanpos_list
         # if working from listflag
         if (self.gridFlag == False) :
             self.acquire_flag = True;
@@ -167,6 +168,7 @@ class MyCAEpics (QtCore.QThread):
 
 
         #if a gridscan or single scan
+        # In The if - set up for grid scan
         if (self.single_take == False) :
             xval = caget ('Dera:m1.VAL')
             count = 0
@@ -179,10 +181,12 @@ class MyCAEpics (QtCore.QThread):
             #if (self.expos_secs > 0) :
             #    self.mytimer.set_expos_time (self.expos_secs)
             #    self.mytimer.start()
+        # if not grid but signle take
         else :
             posfile = open("%s_position.txt" % (self.outpref), 'w')
             self.y_nsteps = 1
             self.x_nsteps = 1
+        # start the scan single or otherwise
         for i in range (self.y_nsteps) :
             if (self.abort_flag == True):
                 break
@@ -197,14 +201,6 @@ class MyCAEpics (QtCore.QThread):
                 if (self.abort_flag== True) :
                     break
                 if (self.single_take == False) :
-                    # get the amount of exposure time remaining on the instrument
-                    #cur_etime = self.mytimer.get_current_etime ()
-                    # need to pause for acquisition
-                    #if (self.acqtime >= cur_etime) :
-                    #    self.mytimer.stopclock()
-                    #    mmb = QtGui.QMessageBox.warning (self,'pyAmptek Exposure', 'Re-start exposure', QtGui.QMessageBox.O)
-                    #    self.mytimer.start()
-
 
                     xval = self.x_start + j * self.x_inc
                     outstr = '%d\t%f\t%f\r\n'%(count,xval,yval)
@@ -241,6 +237,7 @@ class MyCAEpics (QtCore.QThread):
         self.bclient.close_shutter()
         self.set_status.emit("Ready", 0)
         self.acquire_flag = False
+        # posfile is written when grid scan
         if (self.single_take == False) :
             posfile.close()
         self.singleTake = False 

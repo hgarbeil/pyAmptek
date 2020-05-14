@@ -322,6 +322,8 @@ class gridscan(QtWidgets.QMainWindow):
         outpref = self.ui.outprefLE.text()
         outfile = outpref + '_XRD_##_####.sfrm'
         # check if outfile exists
+
+
         # start the bclient thread which does the acquisition
         self.bclient.set_scan_type (2)
         self.bclient.set_scan_params (dist,theta, omega, phi, outfile)

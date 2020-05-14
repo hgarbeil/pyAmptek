@@ -243,7 +243,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>2</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="tab">
      <attribute name="title">
@@ -253,13 +253,13 @@
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>10</y>
+        <y>0</y>
         <width>291</width>
-        <height>161</height>
+        <height>171</height>
        </rect>
       </property>
       <property name="title">
-       <string>X Motor (m3.VAL)</string>
+       <string>X Motor (m1.VAL)</string>
       </property>
       <widget class="QPushButton" name="x_MoveButton">
        <property name="geometry">
@@ -406,7 +406,7 @@
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>190</y>
+        <y>170</y>
         <width>291</width>
         <height>161</height>
        </rect>
@@ -559,7 +559,7 @@
       <property name="geometry">
        <rect>
         <x>20</x>
-        <y>360</y>
+        <y>400</y>
         <width>265</width>
         <height>31</height>
        </rect>
@@ -697,15 +697,24 @@
      <widget class="QWidget" name="layoutWidget">
       <property name="geometry">
        <rect>
-        <x>10</x>
+        <x>0</x>
         <y>390</y>
-        <width>361</width>
+        <width>321</width>
         <height>36</height>
        </rect>
       </property>
       <layout class="QGridLayout" name="gridLayout_6">
+       <property name="horizontalSpacing">
+        <number>0</number>
+       </property>
        <item row="0" column="0">
         <widget class="QPushButton" name="clearCoordsButton">
+         <property name="maximumSize">
+          <size>
+           <width>110</width>
+           <height>16777215</height>
+          </size>
+         </property>
          <property name="text">
           <string>Clear All </string>
          </property>
@@ -713,6 +722,12 @@
        </item>
        <item row="0" column="1">
         <widget class="QPushButton" name="saveCoordsButton">
+         <property name="maximumSize">
+          <size>
+           <width>110</width>
+           <height>16777215</height>
+          </size>
+         </property>
          <property name="text">
           <string>Save positions</string>
          </property>
@@ -720,6 +735,12 @@
        </item>
        <item row="0" column="2">
         <widget class="QPushButton" name="restoreCoordsButton">
+         <property name="maximumSize">
+          <size>
+           <width>110</width>
+           <height>16777215</height>
+          </size>
+         </property>
          <property name="text">
           <string>Open positions</string>
          </property>
@@ -1332,7 +1353,7 @@
      <x>0</x>
      <y>0</y>
      <width>1140</width>
-     <height>31</height>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

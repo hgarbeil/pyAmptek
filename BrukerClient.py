@@ -281,7 +281,6 @@ class BrukerClient (QtCore.QThread) :
                 if "[SHUTTERSTATUS /STATUS=1" in data :
                     print "SHUTTER status string : "
                     loc = data.find ("[SHUTTER")
-                    newstr = data[loc:]
                     print data
                     done = 1
 
@@ -308,7 +307,6 @@ class BrukerClient (QtCore.QThread) :
                 if "[SHUTTERSTATUS /STATUS=0" in data:
                     print "SHUTTER status string : "
                     loc = data.find("[SHUTTER")
-                    newstr = data[loc:]
                     print data
                     done = 1
 
