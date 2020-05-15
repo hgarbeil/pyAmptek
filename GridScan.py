@@ -7,6 +7,7 @@ from epics import caget, cainfo, caput
 from MyCAEpics import *
 from BrukerClient import *
 import sys
+import os
 import time
 
 class gridscan(QtWidgets.QMainWindow):
@@ -322,7 +323,18 @@ class gridscan(QtWidgets.QMainWindow):
         outpref = self.ui.outprefLE.text()
         outfile = outpref + '_XRD_##_####.sfrm'
         # check if outfile exists
-
+        idir = os.path.dirname (outfile)
+        fname - os.path.basename (outfile)
+        iloc = fname.find ("_XRD")
+        fname = fname[0:iloc+3]
+        for file in os.listdir(idir):
+            iloc=file.find(fname)
+            if iloc > 0 :
+                mbox = QtGui.QMessageBox.question (self, 'File Prefix Exists', "OK to overwrite?", QtGui.QMessageBox.Yes | QtGui.QMessageBox.Cancel)
+                if mbox == QtGui.QMessageBox.Yes :
+                    break
+                if mbox == QtGui.QMessageBox.Cancel :
+                    return
 
         # start the bclient thread which does the acquisition
         self.bclient.set_scan_type (2)

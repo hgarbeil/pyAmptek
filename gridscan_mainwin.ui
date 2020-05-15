@@ -18,7 +18,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>520</y>
+      <y>560</y>
       <width>105</width>
       <height>28</height>
      </rect>
@@ -147,7 +147,7 @@
    <widget class="QPushButton" name="singleAcqButton">
     <property name="geometry">
      <rect>
-      <x>10</x>
+      <x>240</x>
       <y>560</y>
       <width>105</width>
       <height>28</height>
@@ -167,7 +167,7 @@
     <property name="geometry">
      <rect>
       <x>120</x>
-      <y>520</y>
+      <y>560</y>
       <width>105</width>
       <height>28</height>
      </rect>
@@ -186,7 +186,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>480</y>
+      <y>520</y>
       <width>101</width>
       <height>28</height>
      </rect>
@@ -239,7 +239,7 @@
       <x>10</x>
       <y>0</y>
       <width>321</width>
-      <height>471</height>
+      <height>511</height>
      </rect>
     </property>
     <property name="currentIndex">
@@ -253,13 +253,21 @@
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>0</y>
+        <y>-10</y>
         <width>291</width>
         <height>171</height>
        </rect>
       </property>
+      <property name="font">
+       <font>
+        <pointsize>11</pointsize>
+       </font>
+      </property>
       <property name="title">
-       <string>X Motor (m1.VAL)</string>
+       <string/>
+      </property>
+      <property name="flat">
+       <bool>false</bool>
       </property>
       <widget class="QPushButton" name="x_MoveButton">
        <property name="geometry">
@@ -401,18 +409,44 @@
         </item>
        </layout>
       </widget>
+      <widget class="QLabel" name="label_33">
+       <property name="geometry">
+        <rect>
+         <x>210</x>
+         <y>60</y>
+         <width>62</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>(m1.VAL)</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_34">
+       <property name="geometry">
+        <rect>
+         <x>210</x>
+         <y>30</y>
+         <width>62</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>X Motor</string>
+       </property>
+      </widget>
      </widget>
      <widget class="QGroupBox" name="groupBox_2">
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>170</y>
+        <y>160</y>
         <width>291</width>
-        <height>161</height>
+        <height>181</height>
        </rect>
       </property>
       <property name="title">
-       <string>Y Motor (m2.VAL)</string>
+       <string/>
       </property>
       <widget class="QPushButton" name="y_MoveButton">
        <property name="geometry">
@@ -554,12 +588,44 @@
         </item>
        </layout>
       </widget>
+      <widget class="QLabel" name="label_35">
+       <property name="geometry">
+        <rect>
+         <x>210</x>
+         <y>30</y>
+         <width>62</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Y Motor</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_36">
+       <property name="geometry">
+        <rect>
+         <x>210</x>
+         <y>60</y>
+         <width>62</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::NoFrame</enum>
+       </property>
+       <property name="lineWidth">
+        <number>1</number>
+       </property>
+       <property name="text">
+        <string>(m2.VAL)</string>
+       </property>
+      </widget>
      </widget>
      <widget class="QPushButton" name="updateCenterButton">
       <property name="geometry">
        <rect>
         <x>20</x>
-        <y>400</y>
+        <y>440</y>
         <width>265</width>
         <height>31</height>
        </rect>
