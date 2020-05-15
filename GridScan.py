@@ -308,8 +308,6 @@ class gridscan(QtWidgets.QMainWindow):
         #runnum = int(self.ui.runnumLE.text())
         self.bclient.set_image_params(runnum, nscans, secs, width)
 
-
-
     # collect with the XRD detector, first driving to the specified location
     def collect_XRD (self):
         # read the fields off the display and start the collect
@@ -321,20 +319,15 @@ class gridscan(QtWidgets.QMainWindow):
         runnum = int(self.ui.runnumLE.text())
         self.set_image_params(runnum)
         outpref = self.ui.outprefLE.text()
+        outpref1 = outpref+'_XRD'
+        # check output file to see if prefix already exists and if so, ok to overwrite
+        status = self.check_overwrite (outpref1)
+        if (status ==0) :
+            print 'XRD abort, specify new output file name'
+            return
         outfile = outpref + '_XRD_##_####.sfrm'
         # check if outfile exists
-        idir = os.path.dirname (outfile)
-        fname - os.path.basename (outfile)
-        iloc = fname.find ("_XRD")
-        fname = fname[0:iloc+3]
-        for file in os.listdir(idir):
-            iloc=file.find(fname)
-            if iloc > 0 :
-                mbox = QtGui.QMessageBox.question (self, 'File Prefix Exists', "OK to overwrite?", QtGui.QMessageBox.Yes | QtGui.QMessageBox.Cancel)
-                if mbox == QtGui.QMessageBox.Yes :
-                    break
-                if mbox == QtGui.QMessageBox.Cancel :
-                    return
+
 
         # start the bclient thread which does the acquisition
         self.bclient.set_scan_type (2)
@@ -342,6 +335,30 @@ class gridscan(QtWidgets.QMainWindow):
         self.bclient.start()
     #    noresponse=self.bclient.execute_scan(dist,theta, omega, phi, outfile)
 
+
+    # check output file - if prefix already exists or not
+    # return 0 - not ok to overwrite
+    # return 1 - if ok to overwrite
+    # return 2 - prefix does not exist
+    def check_overwrite (self,fname) :
+        idir = os.path.dirname(ifil)
+        fname = os.path.basename(ifil)
+        for file in os.listdir(idir):
+            print file
+            iloc = file.find(fname)
+            print iloc
+            if iloc >= 0:
+                mbox = QtWidgets.QMessageBox()
+                mbox.setWindowTitle("Output File Prefix Exists")
+                mbox.setIcon(QtGui.QMessageBox.Question)
+                mbox.setText("OK to Overwrite")
+                mbox.setStandardButtons(QtGui.QMessageBox.Yes | QtGui.QMessageBox.Cancel)
+                status = mbox.exec_()
+                if status == QtGui.QMessageBox.Yes:
+                    return (1)
+                if status == QtGui.QMessageBox.Cancel:
+                  return (0)
+        return (2)
 
     def exceed_twotheta (self) :
         mbox = QtGui.QMessageBox()
@@ -505,6 +522,14 @@ class gridscan(QtWidgets.QMainWindow):
         runnum = int(self.ui.runnumLE.text())
 
         outpref = self.ui.outprefLE.text()
+        #check for overwrite
+        outpref1 = outpref+'_XRD'
+        # check output file to see if prefix already exists and if so, ok to overwrite
+        status = self.check_overwrite(outpref1)
+        if (status == 0):
+            print 'XRD abort, specify new output file name'
+            return
+
         outfile = outpref + '_XRD_##_####.sfrm'
         # send the scan params to the bruker client
         self.bclient.set_scan_params(dist, theta, omega, phi, outfile)
@@ -565,6 +590,11 @@ class gridscan(QtWidgets.QMainWindow):
             #expos_secs = int (self.ui.instExposLE.text())
             self.ui.acquisitionTimeLE.setText (acqStr)
             outprefix = self.ui.outprefLE_2.text()
+            status = self.check_overwrite(outprefix)
+            if (status == 0):
+                print 'XRF abort, specify new output file name'
+                return
+
             self.ca.set_acquisition_params (outprefix, acquisition_time)
             #self.ca.set_expos_timer (expos_secs)
             self.curAcqSecPBar.setValue(0)
@@ -579,6 +609,10 @@ class gridscan(QtWidgets.QMainWindow):
             # expos_secs = int (self.ui.instExposLE.text())
             self.ui.acquisitionTimeLE.setText(acqStr)
             outprefix = self.ui.outprefLE_2.text()
+            status = self.check_overwrite(outprefix)
+            if (status == 0):
+                print 'XRF abort, specify new output file name'
+                return
             self.ca.set_acquisition_params(outprefix, acquisition_time)
             # self.ca.set_expos_timer (expos_secs)
             self.curAcqSecPBar.setValue(0)
