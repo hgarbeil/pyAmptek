@@ -340,7 +340,7 @@ class gridscan(QtWidgets.QMainWindow):
     # return 0 - not ok to overwrite
     # return 1 - if ok to overwrite
     # return 2 - prefix does not exist
-    def check_overwrite (self,fname) :
+    def check_overwrite (self,ifil) :
         idir = os.path.dirname(ifil)
         fname = os.path.basename(ifil)
         for file in os.listdir(idir):
@@ -348,7 +348,7 @@ class gridscan(QtWidgets.QMainWindow):
             iloc = file.find(fname)
             print iloc
             if iloc >= 0:
-                mbox = QtWidgets.QMessageBox()
+                mbox = QtGui.QMessageBox()
                 mbox.setWindowTitle("Output File Prefix Exists")
                 mbox.setIcon(QtGui.QMessageBox.Question)
                 mbox.setText("OK to Overwrite")
