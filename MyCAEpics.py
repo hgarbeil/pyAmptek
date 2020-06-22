@@ -223,7 +223,8 @@ class MyCAEpics (QtCore.QThread):
                     self.amptek.set_spectrum_file (filstring)
                     #if (self.single_take == False) :
                 if (self.single_take==True) :
-                    self.amptek.set_spectrum_file ("C:/Users/przem/junk.mca")
+                    filstring = "%s_single.mca"%(self.outpref)
+                    self.amptek.set_spectrum_file (filstring)
 
                 self.amptek.set_acquisition_time (self.acqtime)
                 self.amptek.start_acquisition()

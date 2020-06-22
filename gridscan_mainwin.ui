@@ -1349,7 +1349,11 @@
       </widget>
      </item>
      <item row="0" column="1">
-      <widget class="QLineEdit" name="distStashLE"/>
+      <widget class="QLineEdit" name="distStashLE">
+       <property name="text">
+        <string>200</string>
+       </property>
+      </widget>
      </item>
      <item row="1" column="0">
       <widget class="QLabel" name="label_28">
@@ -1359,7 +1363,11 @@
       </widget>
      </item>
      <item row="1" column="1">
-      <widget class="QLineEdit" name="twothetaStashLE"/>
+      <widget class="QLineEdit" name="twothetaStashLE">
+       <property name="text">
+        <string>20</string>
+       </property>
+      </widget>
      </item>
      <item row="2" column="0">
       <widget class="QLabel" name="label_30">
@@ -1369,7 +1377,11 @@
       </widget>
      </item>
      <item row="2" column="1">
-      <widget class="QLineEdit" name="omegaStashLE"/>
+      <widget class="QLineEdit" name="omegaStashLE">
+       <property name="text">
+        <string>60</string>
+       </property>
+      </widget>
      </item>
     </layout>
    </widget>
@@ -1419,7 +1431,7 @@
      <x>0</x>
      <y>0</y>
      <width>1140</width>
-     <height>25</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

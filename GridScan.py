@@ -103,7 +103,7 @@ class gridscan(QtWidgets.QMainWindow):
         #self.connect (self.ca, self.ca.update_position, self,
         #              QtCore.pyqtSlot(self.updateMotors))
         self.ca.update_position.connect (self.update_motors)
-        self.ca.set_status.connect (self.set_status_label, 1)
+        self.ca.set_status.connect (lambda: self.set_status_label(1))
         self.ui.x_MoveButton.clicked.connect (self.move_x_motor)
         self.ui.abortScanButton.clicked.connect (self.abort_scan)
         self.ui.y_MoveButton.clicked.connect(self.move_y_motor)
@@ -341,6 +341,7 @@ class gridscan(QtWidgets.QMainWindow):
     # return 1 - if ok to overwrite
     # return 2 - prefix does not exist
     def check_overwrite (self,ifil) :
+        return (1)
         idir = os.path.dirname(ifil)
         fname = os.path.basename(ifil)
         for file in os.listdir(idir):
