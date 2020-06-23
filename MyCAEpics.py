@@ -11,8 +11,9 @@ from Amp import *
 
 class MyCAEpics (QtCore.QThread):
 
-    update_position = QtCore.pyqtSignal (int, float)
+    update_position = QtCore.pyqtSignal(int, float)
     set_status = QtCore.pyqtSignal(str, int)
+    prep_xrf = QtCore.pyqtSignal()
 
     def __init__(self):
         QtCore.QThread.__init__(self)
@@ -139,6 +140,11 @@ class MyCAEpics (QtCore.QThread):
                 yval = self.scanpos_list[i][1]
                 zval = self.scanpos_list[i][2]
 
+                # prepare by doing the xrf_prep
+                self.prep_xrf.emit()
+                QtCore.QThread.sleep(2)
+
+                # move the x, y, z motors
                 self.move_motor(1,yval)
                 self.update_position.emit(1, yval)
 
@@ -195,9 +201,12 @@ class MyCAEpics (QtCore.QThread):
             if (self.single_take == False) :
                 self.move_motor (1, yval)
                 self.update_position.emit (1, yval)
-                QtCore.QThread.sleep (2)
+                #QtCore.QThread.sleep (2)
             iy = int (yval * 1000)
             for j in range (self.x_nsteps) :
+                # for each scan - do an xrf_prep
+                self.prep_xrf.emit()
+                QtCore.QThread.sleep(2)
                 if (self.abort_flag== True) :
                     break
                 if (self.single_take == False) :

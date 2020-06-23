@@ -266,6 +266,66 @@ class BrukerClient (QtCore.QThread) :
             print "Scans error : %s" % msg
 
         return noresponse
+
+    # quick_scan is a warm up for the xrd system, used before the xrf acquisition to ensure the xray is up and running
+    def quick_scan(self):
+
+        fname_template="Nul"
+        qscantime = 2
+
+        print "--- AddRun"
+
+        me = "[addrun /RowNumber=1 /RunNumber=1 /FirstImageNumber=1  /RotAxis=2  /scansInRun=1" \
+        "/scanTime=%f /Width=%f]"%(qscantime,self.width)
+        print "sending AddRun message to bis"
+        self.command_sock.send(me)
+        time.sleep(0.5)
+        message = "[scans /FilenameTemplate=%s /Fast=%d]" % (fname_template, 1)
+        print message
+        try:
+            print "sending message to bis"
+            self.command_sock.send(message)
+            time.sleep(1)
+            completed = 0
+            noresponse=0
+            while completed == 0 and noresponse <10 :
+                time.sleep(1.0)
+                data = self.status_sock.recv(1024)
+                #print data
+                if self.abort == 1 :
+                    print "abort button pressed"
+                    message = "[HardAbort]"
+                    self.command_sock.send(message)
+                    self.abort=0
+                    completed = 1
+
+                if not data:
+                    print "--no response from BIS", noresponse
+                    noresponse = noresponse + 1
+                    #time.sleep(2.0)
+                    #if noresponse >2:
+                    self.reconnect()
+                else:
+                    noresponse = 0
+                    if "[SCAN_YES /RUNNUMBER=" in data:
+                        num = data.find("/RUNNUMBER")
+                        print data[num:num+30]
+                        s = data[num:num+30]
+                        self.runstringSig.emit(s)
+                    if "[SCAN(S)DONE]" in data:
+                        print "------------- scan is complete"
+                        completed=1
+
+                    if ("[ANGLESTATUS" in data):
+                        angles = self.parse_anglestatus(data)
+                        self.set_angles(angles)
+                        self.newangles.emit()
+        except socket.error, msg:
+            print "Scans error : %s" % msg
+
+        return noresponse
+
+
     # open the shutter
     def open_shutter (self) :
         message = "[SHUTTER /STATUS=1]\n"

@@ -37,7 +37,7 @@ class gridscan(QtWidgets.QMainWindow):
         self.ui.x_MoveLocLE.setText(s)
         self.ui.x_customLE.setText (s)
 
-        self.ui.set_status_label ("Ready")
+        self.set_status_label ("Ready")
 
         # y motors
         curval = caget("Dera:m2.VAL")
@@ -103,7 +103,7 @@ class gridscan(QtWidgets.QMainWindow):
         #self.connect (self.ca, self.ca.update_position, self,
         #              QtCore.pyqtSlot(self.updateMotors))
         self.ca.update_position.connect (self.update_motors)
-        self.ca.set_status.connect (lambda: self.set_status_label(1))
+        self.ca.set_status.connect (self.set_status_label)
         self.ui.x_MoveButton.clicked.connect (self.move_x_motor)
         self.ui.abortScanButton.clicked.connect (self.abort_scan)
         self.ui.y_MoveButton.clicked.connect(self.move_y_motor)
@@ -126,8 +126,14 @@ class gridscan(QtWidgets.QMainWindow):
         self.ui.xrfSelectRB.clicked.connect(self.change_scantype_to_XRF)
         self.ui.bothSelectRB.clicked.connect(self.change_scantype_to_both)
 
+        # on XRF Panel, there is a drive to get the XRD out of the way
+        self.driveButton.clicked.connect (self.drive_stash)
+        # called between motor position moves
+        self.ca.prep_xrf.connect (self.xrf_prep)
+
         # on XRD Panel , these are the drive and drive to default buttons
         # updateAngles - drive button
+
         self.ui.updateAnglesButton.clicked.connect (self.drive_bc_specified)
         # defaultAngles - Drive Default
         self.ui.defaultAnglesButton.clicked.connect (self.drive_bc_default)
@@ -194,6 +200,23 @@ class gridscan(QtWidgets.QMainWindow):
         self.bclient.get_gonio_position()
         self.bclient.newangles.emit()
         #self.bis_update()
+
+    # called by the drive stash button - drive button for XRF acquisition
+    def drive_stash (self):
+        dist = float(self.ui.distStashLE.text())
+        theta = float(self.ui.twothetaStashLE.text())
+        omega = float(self.ui.omegaStashLE.text())
+        if theta < -30 or theta > 30 :
+            print 'theta out of bounds'
+            self.exceed_twotheta()
+            return
+        phi = float (self.ui.phiLE.text())
+        ######
+        # note that there is a scan execute here
+        #self.bclient.execute_scan(dist, theta, omega, phi)
+        self.bclient.drive_to_specified (dist, theta, phi, omega)
+        self.bclient.get_gonio_position()
+        self.bclient.newangles.emit()
 
     def changeXYZUp (self):
         self.bclient.set_motor_control (self.ca)
@@ -695,7 +718,18 @@ class gridscan(QtWidgets.QMainWindow):
         self.curAcqSecPBar.setValue(0)
         self.curAcqSecPBar.setRange(0, acquisition_time)
         self.fulltime = acquisition_time
+        # stash the xrd and take a quick xrd scan
+        self.xrf_prep()
         self.ca.take_single()
+
+    def xrf_prep (self) :
+        self.set_status_label ("Prep for XRF",1)
+        # move xrd motors to stash position
+        self.drive_stash()
+        # we want a short acquisition of the xrd detector to warm up xray system
+        self.bclient.quick_scan()
+        self.set_status_label ("Prep XRF Done",0 )
+
 
     def set_status_label (self, str, state=0) :
         p = self.ui.statusLE.palette()
