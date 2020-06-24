@@ -24,6 +24,7 @@ class MyCAEpics (QtCore.QThread):
         self.x_nsteps = 10
         self.x_inc = 0.01
         self.y_inc = 0.01
+        self.prog_fraction = 0.
         self.acquire_flag = False ;
         self.abort_flag = False
         # amptek
@@ -100,6 +101,9 @@ class MyCAEpics (QtCore.QThread):
     def get_acq_time (self) :
         isec = self.amptek.get_elapsed_secs()
         return isec
+
+    def get_prog_fraction (self) :
+        return self.prog_fraction
     
     def get_cur_expos_time (self) :
         isec = self.amptek.get_elapsed_secs()
@@ -117,6 +121,7 @@ class MyCAEpics (QtCore.QThread):
 
 
     def run (self) :
+        count = 0
         print "Opening the shutter"
         self.bclient.open_shutter()
         print "Finished opening the shutter"
@@ -136,6 +141,7 @@ class MyCAEpics (QtCore.QThread):
             posfile = open("%s_position.txt" % (self.outpref), 'w')
             npos = len(self.scanpos_list)
             for i in range (npos) :
+                self.prog_fraction = float(i)/float(npos)
                 xval = self.scanpos_list[i][0]
                 yval = self.scanpos_list[i][1]
                 zval = self.scanpos_list[i][2]
@@ -166,10 +172,12 @@ class MyCAEpics (QtCore.QThread):
                 self.amptek.set_spectrum_file(filstring)
                 self.amptek.set_acquisition_time(self.acqtime)
                 self.amptek.start_acquisition()
+
             self.bclient.close_shutter()
             self.set_status.emit("Ready", 0)
             self.acquire_flag = False
             posfile.close()
+            self.prog_fraction = 0
             return
 
 
@@ -192,6 +200,7 @@ class MyCAEpics (QtCore.QThread):
             posfile = open("%s_position.txt" % (self.outpref), 'w')
             self.y_nsteps = 1
             self.x_nsteps = 1
+            self.prog_fraction = 0
         # start the scan single or otherwise
         for i in range (self.y_nsteps) :
             if (self.abort_flag == True):
@@ -201,9 +210,11 @@ class MyCAEpics (QtCore.QThread):
             if (self.single_take == False) :
                 self.move_motor (1, yval)
                 self.update_position.emit (1, yval)
-                #QtCore.QThread.sleep (2)
+                # QtCore.QThread.sleep (2)
             iy = int (yval * 1000)
             for j in range (self.x_nsteps) :
+                self.prog_fraction = float(count) / float(self.x_nsteps * self.y_nsteps)
+                count = count + 1
                 # for each scan - do an xrf_prep
                 self.prep_xrf.emit()
                 QtCore.QThread.sleep(2)
@@ -250,4 +261,5 @@ class MyCAEpics (QtCore.QThread):
         # posfile is written when grid scan
         if (self.single_take == False) :
             posfile.close()
-        self.singleTake = False 
+        self.singleTake = False
+        self.prog_fraction = 0.

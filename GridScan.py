@@ -16,7 +16,7 @@ class gridscan(QtWidgets.QMainWindow):
         QtWidgets.QMainWindow.__init__(self)
         self.ui = uic.loadUi("gridscan_mainwin.ui", self)
         curval = caget ("Dera:m1.VAL")
-        self.curAcqSecPBar.setRange(0, 20)
+        self.curAcqSecPBar.setRange(0, 100)
         # if status is not equal to 1 messagebox that info and exit
         if curval == None :
             mbox = QtGui.QMessageBox ()
@@ -148,7 +148,7 @@ class gridscan(QtWidgets.QMainWindow):
         self.ui.actionLoad_mca_file.triggered.connect (self.load_mca)
 
         # progress bar
-        self.ui.curAcqSecPBar.setRange (0, 20)
+        self.ui.curAcqSecPBar.setRange (0, 100)
         self.ui.curAcqSecPBar.setValue (0)
         self.ui.curAcqSecPBar.setFormat ("%v")
 
@@ -179,6 +179,7 @@ class gridscan(QtWidgets.QMainWindow):
         self.mytimer.timeout.connect (self.update_plot)
         self.mytimer.start(1000)
         self.fulltime = 20
+        self.nsteps = 1
 
         # close the application
         self.ui.exitButton.clicked.connect(self.closeup)
@@ -565,35 +566,9 @@ class gridscan(QtWidgets.QMainWindow):
         self.bclient.set_scan_type (self.scantype)
         self.bclient.set_motor_control (self.ca)
         self.bclient.start()
-        # npos = len(scanpos)
-        # nore=0
-        # for i in range(npos):
-        #     if nore == 0:
-        #         xval = scanpos[i][0]
-        #         yval = scanpos[i][1]
-        #         zval = scanpos[i][2]
-        #
-        #         self.ca.move_motor(0, xval)
-        #         self.ca.move_motor(1, yval)
-        #         self.ca.move_motor(2, zval)
-        #
-        #         done = 0
-        #         while done == 0:
-        #             time.sleep(0.5)
-        #             x = self.ca.get_position(0)
-        #             y = self.ca.get_position(1)
-        #             z = self.ca.get_position(2)
-        #             if abs(x-xval) <0.001 and abs(y-yval)<0.001 and abs(z-zval)<0.001: done = 1
-        #         runnum = runnum+1
-        #         self.set_image_params(runnum)
-        #         self.bclient.set_scan_params(dist, theta, omega, phi, outfile)
-        #         nore=self.bclient.execute_scan(dist, theta, omega, phi, outfile)
-        #         #self.bclient.start()
-        #         print "--- position", i, "finished"
-        #     else:
-        #         print "Connection with BIS has been lost"
 
 
+    # next is for XRF grid or list scan
       else:
         if self.scantype == 0:
           print "XRF scan"
@@ -620,10 +595,9 @@ class gridscan(QtWidgets.QMainWindow):
                 return
 
             self.ca.set_acquisition_params (outprefix, acquisition_time)
-            #self.ca.set_expos_timer (expos_secs)
+            self.nsteps =  xsteps * ysteps
+            self.curAcqSecPBar.setRange(0, 100)
             self.curAcqSecPBar.setValue(0)
-            self.curAcqSecPBar.setRange (0, acquisition_time)
-            self.fulltime = acquisition_time
             self.ca.single_take = False
             self.ca.start ()
           # Scan locations
@@ -638,11 +612,12 @@ class gridscan(QtWidgets.QMainWindow):
                 print 'XRF abort, specify new output file name'
                 return
             self.ca.set_acquisition_params(outprefix, acquisition_time)
-            # self.ca.set_expos_timer (expos_secs)
-            self.curAcqSecPBar.setValue(0)
-            self.curAcqSecPBar.setRange(0, acquisition_time)
+
             scanpositions=[]
             self.read_scan_locations (scanpositions)
+            self.nsteps = len (scanpositions)
+            self.curAcqSecPBar.setRange(0, 100)
+            self.curAcqSecPBar.setValue(0)
             self.ca.set_listscan (scanpositions)
             self.ca.start ()
 
@@ -716,10 +691,9 @@ class gridscan(QtWidgets.QMainWindow):
         outprefix = self.ui.outprefLE_2.text()
         self.ca.set_acquisition_params(outprefix, acquisition_time)
         self.curAcqSecPBar.setValue(0)
-        self.curAcqSecPBar.setRange(0, acquisition_time)
+        self.curAcqSecPBar.setRange(0, 100)
+        self.nsteps=1
         self.fulltime = acquisition_time
-        # stash the xrd and take a quick xrd scan
-        self.xrf_prep()
         self.ca.take_single()
 
     def xrf_prep (self) :
@@ -745,9 +719,12 @@ class gridscan(QtWidgets.QMainWindow):
         if self.ca.acquire_flag :
             asecs = self.ca.get_acq_time ()
             esecs = self.ca.get_cur_expos_time()
+            tot_fraction = 100* (self.ca.prog_fraction + esecs/asecs / self.nsteps)
             if (asecs >= self.fulltime) :
                 asecs = self.fulltime
-            self.curAcqSecPBar.setValue(asecs)
+            self.curAcqSecPBar.setValue(tot_fraction)
+        else :
+            self.curAcqSecPBar.setValue (0)
             #print asecs
             #str0 = "Scan file : \r\n%s"%self.ca.scanfile
             #str1 = "%s\r\nElapsed time : %d"%(str0,asecs)
