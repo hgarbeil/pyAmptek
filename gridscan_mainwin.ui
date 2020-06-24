@@ -136,7 +136,7 @@
      <rect>
       <x>840</x>
       <y>549</y>
-      <width>221</width>
+      <width>241</width>
       <height>16</height>
      </rect>
     </property>
@@ -192,7 +192,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>Drive </string>
+     <string>Drive Stash</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_12">
@@ -200,7 +200,7 @@
      <rect>
       <x>840</x>
       <y>520</y>
-      <width>150</width>
+      <width>171</width>
       <height>16</height>
      </rect>
     </property>
@@ -243,7 +243,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>1</number>
     </property>
     <widget class="QWidget" name="tab">
      <attribute name="title">
@@ -1431,7 +1431,7 @@
      <x>0</x>
      <y>0</y>
      <width>1140</width>
-     <height>21</height>
+     <height>20</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

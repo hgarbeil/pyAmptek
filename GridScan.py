@@ -719,12 +719,13 @@ class gridscan(QtWidgets.QMainWindow):
         if self.ca.acquire_flag :
             asecs = self.ca.get_acq_time ()
             esecs = self.ca.get_cur_expos_time()
-            tot_fraction = 100* (self.ca.prog_fraction + esecs/asecs / self.nsteps)
+            tot_fraction = 100* (self.ca.get_prog_fraction() + esecs/asecs / self.nsteps)
             if (asecs >= self.fulltime) :
                 asecs = self.fulltime
             self.curAcqSecPBar.setValue(tot_fraction)
         else :
             self.curAcqSecPBar.setValue (0)
+            
             #print asecs
             #str0 = "Scan file : \r\n%s"%self.ca.scanfile
             #str1 = "%s\r\nElapsed time : %d"%(str0,asecs)
