@@ -725,7 +725,7 @@ class gridscan(QtWidgets.QMainWindow):
             self.curAcqSecPBar.setValue(tot_fraction)
         else :
             self.curAcqSecPBar.setValue (0)
-            
+
             #print asecs
             #str0 = "Scan file : \r\n%s"%self.ca.scanfile
             #str1 = "%s\r\nElapsed time : %d"%(str0,asecs)
