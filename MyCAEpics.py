@@ -221,7 +221,6 @@ class MyCAEpics (QtCore.QThread):
                 if (self.abort_flag== True) :
                     break
                 if (self.single_take == False) :
-
                     xval = self.x_start + j * self.x_inc
                     outstr = '%d\t%f\t%f\r\n'%(count,xval,yval)
                     posfile.write (outstr)
@@ -242,17 +241,12 @@ class MyCAEpics (QtCore.QThread):
                     self.set_status.emit(acqstring, 1)
                     self.amptek.set_spectrum_file (filstring)
                     #if (self.single_take == False) :
-                if (self.single_take==True) :
+                else :
                     filstring = "%s_single.mca"%(self.outpref)
                     self.amptek.set_spectrum_file (filstring)
 
                 self.amptek.set_acquisition_time (self.acqtime)
                 self.amptek.start_acquisition()
-                
-                #os.system(fullstring)
-                #news = [cmdstring, filstring, "%d"%(self.acqtime)]
-                #p = subprocess.Popen (news)
-                #p.wait()
 
 
         self.bclient.close_shutter()
